@@ -1,0 +1,11 @@
+{
+  "name": "velibmap",
+  "scripts": {
+    "postdeploy": "npm install && npm install -g gulp && gulp build"
+  },
+  "env": {
+  },
+  "addons": [
+
+  ]
+}
