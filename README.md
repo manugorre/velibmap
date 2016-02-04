@@ -2,11 +2,24 @@
 
 # Velibmap
 
-Simple boilerplate for Angular2, based on the quickstart tutorial of [angular.io](https://angular.io/docs/ts/latest/quickstart.html)
+Utilisation de l'api JCDecaux, google map et utilisation de firebase pour le deploiement et stockage des données
 
 ## Instructions
+:warning: Toutes les commandes sont à executer à la racine du projet
+
 
 ```shell
+# Installer la cmd gulp si besoin
+npm install -g gulp
+
 npm install
 gulp
+```
+
+### Deploiement du projet
+```shell
+# Installer la cmd firebase si besoin
+npm install -g firebase-tools
+
+firebase deploy
 ```
