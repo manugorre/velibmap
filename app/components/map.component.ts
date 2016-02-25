@@ -3,7 +3,6 @@ import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
 
 import {Velib}              from '../classes/velib';
-// import {VelibListComponent} from './velib-list.component';
 import {VelibService}       from '../services/velib.service';
 
 @Component({
@@ -37,19 +36,39 @@ export class MapComponent {
   inputTo: Object;
 
   constructor(private _velibService: VelibService) {
-    this.getVelibs();
-    this.events();
+    // this.events();
   }
 
   ngOnInit() {
-    this.directionsService = new google.maps.DirectionsService;
+    // this.directionsService = new google.maps.DirectionsService;
     this.directionsDisplay = new google.maps.DirectionsRenderer;
 
     this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
     this.directionsDisplay.setMap(this.map);
-
+    //
     // this.geoLoc();
-    this.autoComplete();
+    // this.autoComplete();
+    // this.velibs = this._velibService.getVelibs();
+    this._velibService.getVelibs().subscribe(
+      velibs => this.velibs = velibs,
+      error =>);
+
+    // this._velibService.getVelibs().then(velibs => this.velibs = velibs);
+
+    this._velibService.getVelib(1).then(function(value){
+      console.log(value);
+    }, function(raison) {
+      // Rejet de la promesse
+      console.log('fail', raison);
+    });
+
+    // this._velibService.getVelib(1).then(function(value){
+    //   console.log(value);
+    // }, function(raison) {
+    //   // Rejet de la promesse
+    //   console.log('fail', raison);
+    // });
+
   }
 
   autoComplete() {
@@ -227,10 +246,6 @@ export class MapComponent {
     infoWindow.setContent(browserHasGeolocation ?
       'Error: The Geolocation service failed.' :
       'Error: Your browser doesn\'t support geolocation.');
-  }
-
-  getVelibs() {
-    this.velibs = this._velibService.getVelibs();
   }
 
 }
