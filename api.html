@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>VelibMap API</title>
+</head>
+<body>
+	
+	<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+	<script>
+		var baseUrl = 'https://api.jcdecaux.com/vls/v1/stations/';
+		var apiKey = '36f17512a2aed2f68edc3bbb58b645042930d953';
+
+		// var allStations = $.ajax({
+		// 	url: baseUrl + '?contract=Paris&apiKey=' + apiKey,
+		//   	method: "GET",
+		//   	dataType: "json"
+		// });
+		 
+		// allStations.done(function(data) { console.log(data) });
+		// allStations.fail(function() { console.log('ERROR.') });
+
+		var oneStation = $.ajax({
+			url: baseUrl + '8020' + '?contract=Paris' + '&apiKey=' + apiKey,
+		  	method: "GET",
+		  	dataType: "json"
+		});
+		 
+		oneStation.done(function(data) { console.log(data) });
+		oneStation.fail(function() { console.log('ERROR.') });
+
+	</script>
+</body>
+</html>
