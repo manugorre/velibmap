@@ -2,13 +2,14 @@ import {Component} from 'angular2/core';
 import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
 
-import {Velib}              from '../service/velib';
+import {VelibDetailComponent} from './velib-detail.components';
 import {VelibService}       from '../services/velib.service';
+import {Velib}              from '../services/velib';
 
 @Component({
   selector: 'map-app',
   templateUrl: 'app/templates/map.html',
-  // directives:[VelibListComponent],
+  directives: [VelibDetailComponent],
   providers: [
     HTTP_PROVIDERS,
     VelibService,
@@ -36,17 +37,23 @@ export class MapComponent {
 
   errorMessage: string;
   velibs:Velib[];
-  velib:Velib[];
+  velib:Velib;
 
   constructor(private _velibService: VelibService) {
     // this.events();
 
   }
 
+  selectedVelib: Velib;
+
   ngOnInit() {
     var app = this;
-    this.getVelibs();
-    this.getVelib(6020);
+    // this.getVelibs();
+
+    this.getVelib(6020, function(velib: Velib){
+      console.log('velib', app.selectedVelib = velib)
+    })
+    // this.selectedVelib = velib;
     // this.directionsService = new google.maps.DirectionsService;
     // this.directionsDisplay = new google.maps.DirectionsRenderer;
 
@@ -77,19 +84,19 @@ export class MapComponent {
 
   }
 
-  getVelibs() {
-    this._velibService.getVelibs()
-                     .subscribe(
-                       velibs => this.velibs = velibs,
-                       error =>  this.errorMessage = <any>error);
-  }
+  // getVelibs() {
+  //   this._velibService.getVelibs()
+  //                    .subscribe(
+  //                      velibs => this.velibs = velibs,
+  //                      error =>  this.errorMessage = <any>error);
+  // }
 
-  getVelib(id: number | string){
-     this._velibService.getVelib(id)
-                      .subscribe(
-                        velib => this.velib = velib,
-                        error =>  this.errorMessage = <any>error);
-  }
+	getVelib(id: number | string, callback){
+		  this._velibService.getVelib(id)
+											.subscribe(
+												velib => this.velib = velib,
+												error =>  this.errorMessage = <any>error);
+	}
 
   autoComplete() {
     this.inputFrom = document.getElementById('pac-input-from');

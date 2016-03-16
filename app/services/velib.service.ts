@@ -8,6 +8,7 @@ import {Velib} from './velib';
 @Injectable()
 export class VelibService {
   constructor(private http: Http) { }
+
   private _key = '&apiKey=5696ca55c90197b68722762cd8aa3a9e16184de2';
   private _contract = '?contract=paris';
   private _baseUrl = 'https://api.jcdecaux.com/vls/v1/stations';
@@ -34,7 +35,7 @@ export class VelibService {
     }).map((velibs: Array<any>) => {
       let result: Array<Velib> = [];
       if (velibs) {
-        console.log(velibs);
+        // console.log(velibs);
         velibs.forEach((velib) => {
           result.push(new Velib(velib.id, velib.name));
         });
