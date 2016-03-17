@@ -16,31 +16,16 @@ export class VelibService {
 
   getVelibs() {
     return this.http.get(this._baseUrl + this._contract + this._key)
-      .map((responseData) => {
-      return responseData.json();
-    }).map((velibs: Array<any>) => {
-      let result: Array<Velib> = [];
-      if (velibs) {
-        velibs.forEach((velib) => {
-          result.push(new Velib(velib.id, velib.name));
-        });
-      }
-    });//.subscribe(res => this.velibs = res);
+                    .map(res => <Velib[]> res.json().data)
+                    .do(data => console.log(data))
+                    .catch(this.handleError);
   }
 
   getVelib (id: number | string) {
     return this.http.get(this._baseUrl + `/${id}` + this._contract + this._key)
-      .map((responseData) => {
-      return responseData.json();
-    }).map((velibs: Array<any>) => {
-      let result: Array<Velib> = [];
-      if (velibs) {
-        // console.log(velibs);
-        velibs.forEach((velib) => {
-          result.push(new Velib(velib.id, velib.name));
-        });
-      }
-    });//.subscribe(res => this.velibs = res);
+                    .map(res => <Velib[]> res.json().data)
+                    .do(data => console.log(data))
+                    .catch(this.handleError);
   }
 
   private handleError(error: Response) {

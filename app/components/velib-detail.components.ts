@@ -32,6 +32,7 @@ import {Velib}	from '../services/velib';
 @Component({
   selector: 'velib-detail',
   template: `
+    <h1>test</h1>
     <div *ngIf="velib">
       <h2>{{velib.name}}</h2>
     </div>

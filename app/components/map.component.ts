@@ -49,11 +49,16 @@ export class MapComponent {
   ngOnInit() {
     var app = this;
     // this.getVelibs();
+    this.getVelib()
+    // this.getVelib(6020, function(){
+    //        console.log('velib', app.selectedVelib = app.velib)
+    //      });
+    // , function(velib: Velib){
+    //   console.log('velib', app.selectedVelib = velib)
+    // }
 
-    this.getVelib(6020, function(velib: Velib){
-      console.log('velib', app.selectedVelib = velib)
-    })
-    // this.selectedVelib = velib;
+    // this.selectedVelib;
+
     // this.directionsService = new google.maps.DirectionsService;
     // this.directionsDisplay = new google.maps.DirectionsRenderer;
 
@@ -91,11 +96,11 @@ export class MapComponent {
   //                      error =>  this.errorMessage = <any>error);
   // }
 
-	getVelib(id: number | string, callback){
-		  this._velibService.getVelib(id)
-											.subscribe(
-												velib => this.velib = velib,
-												error =>  this.errorMessage = <any>error);
+	getVelib(id: number | string){
+      this._velibService.getVelib(6020)
+                  .subscribe(
+                    velibs => this.velibs = velibs,
+                    error =>  this.errorMessage = <any>error);
 	}
 
   autoComplete() {
