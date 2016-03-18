@@ -22,9 +22,7 @@ export class VelibService {
 
   getVelib (id: number | string) {
     return this.http.get(this._baseUrl + `/${id}` + this._contract + this._key)
-                .toPromise()
-                .then(res => <Velib[]> res.json().data, this.handleError)
-                .then(data => { console.log(data); return data; });
+      .map((res:Response) => res.json());
   }
 
   private handleError(error: Response) {

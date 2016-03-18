@@ -97,10 +97,10 @@ export class MapComponent {
   // }
 
 	getVelib(id: number | string){
-      this._velibService.getVelib(6020)
-                  .then(
-                    velibs => this.velibs = velibs,
-                    error =>  this.errorMessage = <any>error);
+      this._velibService.getVelib(6020).subscribe(
+      data => { console.log(data)},
+      err => { console.error(err)}
+    );
 	}
 
   autoComplete() {
