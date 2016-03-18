@@ -1,6 +1,5 @@
 import {Injectable}     from 'angular2/core';
 import {Http, Response} from 'angular2/http';
-import {Headers, RequestOptions} from 'angular2/http';
 import {Observable}     from 'rxjs/Observable';
 
 import {Velib} from './velib';
@@ -16,16 +15,16 @@ export class VelibService {
 
   getVelibs() {
     return this.http.get(this._baseUrl + this._contract + this._key)
-                    .map(res => <Velib[]> res.json().data)
-                    .do(data => console.log(data))
-                    .catch(this.handleError);
+                .toPromise()
+                .then(res => <Velib[]> res.json().data, this.handleError)
+                .then(data => { console.log(data); return data; });
   }
 
   getVelib (id: number | string) {
     return this.http.get(this._baseUrl + `/${id}` + this._contract + this._key)
-                    .map(res => <Velib[]> res.json().data)
-                    .do(data => console.log(data))
-                    .catch(this.handleError);
+                .toPromise()
+                .then(res => <Velib[]> res.json().data, this.handleError)
+                .then(data => { console.log(data); return data; });
   }
 
   private handleError(error: Response) {

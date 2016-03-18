@@ -98,7 +98,7 @@ export class MapComponent {
 
 	getVelib(id: number | string){
       this._velibService.getVelib(6020)
-                  .subscribe(
+                  .then(
                     velibs => this.velibs = velibs,
                     error =>  this.errorMessage = <any>error);
 	}
