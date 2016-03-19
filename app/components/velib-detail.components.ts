@@ -1,33 +1,7 @@
 import {Component, OnInit}	from 'angular2/core';
-// import {RouteParams} from 'angular2/router';
-//
-import {Velib}	from '../services/velib';
-// import {VelibService}	from '../services/velib.service';
-//
-// @Component({
-//   selector: 'velib-detail',
-//   templateUrl: 'app/templates/detailVelib.html'
-// })
 
-// export class VelibDetailComponent implements OnInit  {
-// 	velib: Velib;
-//   errorMessage: string;
-//
-// 	constructor(private _service:VelibService, private _routeParams: RouteParams){
-//
-// 	}
-//
-// 	ngOnInit() {}
-//
-// 	getVelib(id: number | string){
-// 		 return this._service.getVelib(id)
-// 											.subscribe(
-// 												velib => this.velib = velib,
-// 												error =>  this.errorMessage = <any>error);
-// 	}
-//
-//
-// };
+import {VelibService}       from '../services/velib.service';
+import {Velib}              from '../services/velib';
 
 @Component({
   selector: 'velib-detail',
@@ -40,4 +14,29 @@ import {Velib}	from '../services/velib';
 })
 export class VelibDetailComponent {
   velib: Velib;
+
+  constructor(private _velibService: VelibService){
+
+  }
+
+  ngOnInit(){
+    var app = this;
+    this.getVelib(6020, function(data){
+      console.log(data);
+      this.velib = data
+    });
+  }
+
+	getVelib(id: number | string, callback){
+    var app = this;
+    this._velibService.getVelib(id).subscribe(
+      data => {
+        app.velib = data;
+        callback(data);
+      },
+      err => {
+        console.error(err)
+      }
+    );
+	}
 }

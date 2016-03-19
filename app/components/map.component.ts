@@ -1,3 +1,5 @@
+let google = google || {}
+
 import {Component} from 'angular2/core';
 import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
@@ -15,7 +17,7 @@ import {Velib}              from '../services/velib';
     VelibService,
   ]
 })
-export class MapComponent {
+export class MapComponent{
 
   map: Object;
   directionsService: Object;
@@ -40,68 +42,22 @@ export class MapComponent {
   velib:Velib;
 
   constructor(private _velibService: VelibService) {
-    // this.events();
+
 
   }
 
-  selectedVelib: Velib;
-
   ngOnInit() {
-    var app = this;
-    // this.getVelibs();
-    this.getVelib()
-    // this.getVelib(6020, function(){
-    //        console.log('velib', app.selectedVelib = app.velib)
-    //      });
-    // , function(velib: Velib){
-    //   console.log('velib', app.selectedVelib = velib)
-    // }
 
-    // this.selectedVelib;
+    this.directionsService = new google.maps.DirectionsService;
+    this.directionsDisplay = new google.maps.DirectionsRenderer;
 
-    // this.directionsService = new google.maps.DirectionsService;
-    // this.directionsDisplay = new google.maps.DirectionsRenderer;
-
-    // this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
-    // this.directionsDisplay.setMap(this.map);
+    this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
+    this.directionsDisplay.setMap(this.map);
 
     // this.geoLoc();
     // this.autoComplete();
-    // this.velibs = this._velibService.getVelibs();
-    // this._velibService.getVelibs().subscribe(
-    //   velibs => this.velibs = velibs);
-    //
-    // // this._velibService.getVelibs().then(velibs => this.velibs = velibs);
-    //
-    // this._velibService.getVelib(1).then(function(value){
-    //   console.log(value);
-    // }, function(raison) {
-    //   // Rejet de la promesse
-    //   console.log('fail', raison);
-    // });
-
-    // this._velibService.getVelib(1).then(function(value){
-    //   console.log(value);
-    // }, function(raison) {
-    //   // Rejet de la promesse
-    //   console.log('fail', raison);
-    // });
 
   }
-
-  // getVelibs() {
-  //   this._velibService.getVelibs()
-  //                    .subscribe(
-  //                      velibs => this.velibs = velibs,
-  //                      error =>  this.errorMessage = <any>error);
-  // }
-
-	getVelib(id: number | string){
-      this._velibService.getVelib(6020).subscribe(
-      data => { console.log(data)},
-      err => { console.error(err)}
-    );
-	}
 
   autoComplete() {
     this.inputFrom = document.getElementById('pac-input-from');
@@ -253,7 +209,7 @@ export class MapComponent {
     var oThis = this;
     // Try HTML5 geolocation.
     var image = 'dist/images/geoloc.gif';
-    // var marker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+    var marker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
 
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(function(position) {
