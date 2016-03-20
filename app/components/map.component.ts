@@ -1,5 +1,3 @@
-let google = google || {}
-
 import {Component} from 'angular2/core';
 import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
@@ -31,6 +29,8 @@ export class MapComponent{
     scrollwheel: true,
     zoom: 12,
     zoomControl: false,
+    streetViewControl: false,
+    disableDefaultUI: true,
     mapTypeControl: false
   };
 
@@ -43,10 +43,10 @@ export class MapComponent{
 
   constructor(private _velibService: VelibService) {
 
-
   }
 
   ngOnInit() {
+    const app = this;
 
     this.directionsService = new google.maps.DirectionsService;
     this.directionsDisplay = new google.maps.DirectionsRenderer;
@@ -56,7 +56,9 @@ export class MapComponent{
 
     // this.geoLoc();
     // this.autoComplete();
-
+    this.getVelibs(function(data){
+      app.setMarkers();
+    });
   }
 
   autoComplete() {
@@ -80,6 +82,46 @@ export class MapComponent{
     });
 
   }
+
+  setMarkers(){
+    const app = this;
+    let markers = [];
+    let velibs = this.velibs;
+
+    console.log('data', this.velibs)
+
+    for (var key in velibs) {
+      console.log('new', velibs[key]);
+
+      markers[key] = new google.maps.Marker({
+              position: new google.maps.LatLng(velibs[key].position.lat, velibs[key].position.lng),
+              map: app.map,
+              flat: true,
+              title: velibs[key].name,
+              draggable: false
+      });
+
+      // var iconFile = 'http://maps.google.com/mapfiles/ms/icons/'+marker_color+'-dot.png';
+      // markers[key].setIcon(iconFile);
+
+      google.maps.event.addListener(markers[key], 'click', function(e) {
+        console.log('markers', e);
+      });
+    }
+  }
+
+	getVelibs(callback){
+    var app = this;
+    this._velibService.getVelibs().subscribe(
+      data => {
+        app.velibs = data;
+        callback(data);
+      },
+      err => {
+        console.error(err)
+      }
+    );
+	}
 
   calculateRoute(dest, waypts){
     var oThis = this;
@@ -234,6 +276,10 @@ export class MapComponent{
     infoWindow.setContent(browserHasGeolocation ?
       'Error: The Geolocation service failed.' :
       'Error: Your browser doesn\'t support geolocation.');
+  }
+
+  hasClass(el, cls) {
+    return el.className && new RegExp("(\\s|^)" + cls + "(\\s|$)").test(el.className);
   }
 
 }

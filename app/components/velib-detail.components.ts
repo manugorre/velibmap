@@ -6,7 +6,6 @@ import {Velib}              from '../services/velib';
 @Component({
   selector: 'velib-detail',
   template: `
-    <h1>test</h1>
     <div *ngIf="velib">
       <h2>{{velib.name}}</h2>
     </div>
@@ -21,10 +20,10 @@ export class VelibDetailComponent {
 
   ngOnInit(){
     var app = this;
-    this.getVelib(6020, function(data){
-      console.log(data);
-      this.velib = data
-    });
+    // this.getVelib(6020, function(data){
+    //   console.log(data);
+    //   this.velib = data
+    // });
   }
 
 	getVelib(id: number | string, callback){

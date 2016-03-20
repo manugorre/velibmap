@@ -12,12 +12,29 @@ import {VelibService}	from '../services/velib.service';
 
 export class AppComponent {
 
+  //nav
+  stateNav: Boolean;
+  _nav: Element;
+
   constructor(){
 
   }
 
-  // ngOnInit(private _service:VelibService){
-  //   console.log(VelibDetailComponent.getVelib(6020));
-  // }
+  ngOnInit(){
+
+    //nav
+    this.stateNav = false;
+    this._nav = document.getElementsByClassName('js-nav')[0];
+  }
+
+  navOpen(){
+    this._nav.className += ' visible';
+    this.stateNav = true;
+  }
+
+  navClose(){
+    this._nav.classList.remove('visible');
+    this.stateNav = false;
+  }
 
 }
