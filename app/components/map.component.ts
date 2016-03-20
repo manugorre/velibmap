@@ -13,11 +13,13 @@ import {Velib}              from '../services/velib';
   providers: [
     HTTP_PROVIDERS,
     VelibService,
+    VelibDetailComponent
   ]
 })
 export class MapComponent{
 
   map: Object;
+  mc: Object;
   directionsService: Object;
   directionsDisplay: Object;
 
@@ -34,6 +36,10 @@ export class MapComponent{
     mapTypeControl: false
   };
 
+  mcOptions: any = {
+    gridSize: 50, maxZoom: 15
+  };
+
   inputFrom: Object;
   inputTo: Object;
 
@@ -41,7 +47,7 @@ export class MapComponent{
   velibs:Velib[];
   velib:Velib;
 
-  constructor(private _velibService: VelibService) {
+  constructor(private _velibService: VelibService, private _velibDetail: VelibDetailComponent) {
 
   }
 
@@ -88,26 +94,23 @@ export class MapComponent{
     let markers = [];
     let velibs = this.velibs;
 
-    console.log('data', this.velibs)
-
     for (var key in velibs) {
-      console.log('new', velibs[key]);
-
       markers[key] = new google.maps.Marker({
               position: new google.maps.LatLng(velibs[key].position.lat, velibs[key].position.lng),
               map: app.map,
               flat: true,
+              id: velibs[key].number,
               title: velibs[key].name,
               draggable: false
       });
-
       // var iconFile = 'http://maps.google.com/mapfiles/ms/icons/'+marker_color+'-dot.png';
       // markers[key].setIcon(iconFile);
 
-      google.maps.event.addListener(markers[key], 'click', function(e) {
-        console.log('markers', e);
+      google.maps.event.addListener(markers[key], 'click', function(event) {
+        app._velibDetail.getVelib(this.id);
       });
     }
+    var markerCluster = new MarkerClusterer(app.map, markers, app.mcOptions);
   }
 
 	getVelibs(callback){

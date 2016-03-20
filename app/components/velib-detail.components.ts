@@ -1,4 +1,5 @@
 import {Component, OnInit}	from 'angular2/core';
+import {NgZone} from 'angular2/angular2';
 
 import {VelibService}       from '../services/velib.service';
 import {Velib}              from '../services/velib';
@@ -12,6 +13,8 @@ import {Velib}              from '../services/velib';
   `
 })
 export class VelibDetailComponent {
+  zone:NgZone;
+
   velib: Velib;
 
   constructor(private _velibService: VelibService){
@@ -19,19 +22,18 @@ export class VelibDetailComponent {
   }
 
   ngOnInit(){
-    var app = this;
-    // this.getVelib(6020, function(data){
-    //   console.log(data);
-    //   this.velib = data
-    // });
+    const app = this;
   }
 
 	getVelib(id: number | string, callback){
-    var app = this;
+    const app = this;
     this._velibService.getVelib(id).subscribe(
       data => {
-        app.velib = data;
-        callback(data);
+        app.zone.run(() => {
+          this.velib = data;
+          console.log('Updated List: ', this.velib);
+        });
+        // callback(data);
       },
       err => {
         console.error(err)
