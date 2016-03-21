@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
 
@@ -12,11 +12,12 @@ import {Velib}              from '../services/velib';
   directives: [VelibDetailComponent],
   providers: [
     HTTP_PROVIDERS,
-    VelibService,
-    VelibDetailComponent
+    VelibService
   ]
 })
 export class MapComponent{
+  @ViewChild(VelibDetailComponent)
+  _velibDetail: VelibDetailComponent
 
   map: Object;
   mc: Object;
@@ -47,7 +48,7 @@ export class MapComponent{
   velibs:Velib[];
   velib:Velib;
 
-  constructor(private _velibService: VelibService, private _velibDetail: VelibDetailComponent) {
+  constructor(private _velibService: VelibService) {
 
   }
 
