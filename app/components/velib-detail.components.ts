@@ -14,7 +14,7 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
         <span><i class="material-icons dp48">directions_bike</i> : {{ velib.available_bikes }}</span>
         <span><i class="material-icons dp48">directions_walk</i> : {{ velib.available_bike_stands }}</span>
       </div>
-      <i class="expand material-icons dp48">expand_more</i>
+      <i class="expand material-icons dp48">more_vert</i>
     </div>
   `,
   pipes: [SplitNamePipe]
