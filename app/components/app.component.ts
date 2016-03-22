@@ -14,6 +14,7 @@ export class AppComponent {
 
   //nav
   stateNav: Boolean;
+  scrollMenu: Object;
   _nav: Element;
 
   constructor(){
@@ -29,6 +30,9 @@ export class AppComponent {
   navOpen(){
     this._nav.className += ' visible';
     this.stateNav = true;
+    this.scrollMenu = new IScroll('.js-scroll-menu', {
+      mouseWheel: true
+    });
   }
 
   navClose(){
