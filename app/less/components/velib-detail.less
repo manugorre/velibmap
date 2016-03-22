@@ -12,15 +12,16 @@ velib-detail{
 	-ms-transition: -ms-transform 0.3s;
   -webkit-transition: -webkit-transform 0.3s;
   transition: transform 0.3s;
-  &.preview{
-    -ms-transform: translateX(0%);
-    -webkit-transform: translateX(0%);
-    transform: translateX(0%);
+  &.visible.preview{
+    -ms-transform: translateY(-50vh);
+    -webkit-transform: translateY(-50vh);
+    transform: translateY(-50vh);
   }
   &.visible{
-    -ms-transform: translateX(0%);
-    -webkit-transform: translateX(0%);
-    transform: translateX(0%);
+    -ms-transform: translateX(-63px);
+    -webkit-transform: translateX(-63px);
+    transform: translateY(-63px);
+    bottom: inherit;
   }
   .station-name{
     font-family: 'roboto';
@@ -31,6 +32,7 @@ velib-detail{
     font-weight: 400;
   }
   .detail-header{
+    position: relative;
     &.open{
       border-bottom: 4px solid #4caf50;
     }
@@ -42,6 +44,14 @@ velib-detail{
       top: 50%;
       right: 10px;
       margin-top: -12px;
+    }
+  }
+  .detail-content{
+    height: 42vh;
+    max-height: 585px;
+    overflow: hidden;
+    > div{
+
     }
   }
 }

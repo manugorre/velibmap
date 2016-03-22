@@ -7,14 +7,42 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
 @Component({
   selector: 'velib-detail',
   template: `
-    <div *ngIf="velib" class="detail-header {{ velib.status | lowercase }}">
-      <h2 class="station-name">{{ velib.name | splitName:0 }}</h2>
-      <h3 class="station-city">{{ velib.name | splitName:1 }}</h3>
-      <div class="info">
-        <span><i class="material-icons dp48">directions_bike</i> : {{ velib.available_bikes }}</span>
-        <span><i class="material-icons dp48">directions_walk</i> : {{ velib.available_bike_stands }}</span>
+    <div *ngIf="velib">
+      <div class="detail-header {{ velib.status | lowercase }}">
+        <h2 class="station-name">{{ velib.name | splitName:0 }}</h2>
+        <h3 class="station-city">{{ velib.name | splitName:1 }}</h3>
+        <div class="info">
+          <span><i class="material-icons dp48">directions_bike</i> : {{ velib.available_bikes }}</span>
+          <span><i class="material-icons dp48">directions_walk</i> : {{ velib.available_bike_stands }}</span>
+        </div>
+        <i (click)="detailVelibToggle()" class="expand material-icons dp48">more_vert</i>
       </div>
-      <i class="expand material-icons dp48">more_vert</i>
+      <div class="js-scroll detail-content">
+        <ul>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
+        </ul>
+      </div>
     </div>
   `,
   pipes: [SplitNamePipe]
@@ -22,15 +50,19 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
 export class VelibDetailComponent {
   velib: Velib;
 
-  stateNav: Boolean;
+  stateDetail: Boolean;
+  stateDetailMore: Boolean;
   _detailVelib: Element;
+  _detailMoreVelib: Element;
+  scrollDetailMore: Object;
 
   constructor(private _velibService: VelibService, private _zone: NgZone){
 
   }
 
   ngOnInit(){
-    this.stateNav = false;
+    this.stateDetail = false;
+    this.stateDetailMore = false;
     this._detailVelib = document.getElementsByClassName('js-detail-velib')[0];
   }
 
@@ -54,11 +86,30 @@ export class VelibDetailComponent {
 
   velibOpen(){
     this._detailVelib.className += ' visible';
-    this.stateNav = true;
+    this.stateDetail = true;
   }
 
   velibClose(){
     this._detailVelib.classList.remove('visible');
-    this.stateNav = false;
+    this.stateDetail = false;
+  }
+
+  detailVelibToggle(){
+    if (this.stateDetailMore) {
+        this.expandClose()
+    }else{
+      this.expandOpen()
+    }
+  }
+
+  expandOpen(){
+    this._detailVelib.className += ' preview';
+    this.stateDetailMore = true;
+    this.scrollDetailMore = new IScroll('.js-scroll');
+  }
+
+  expandClose(){
+    this._detailVelib.classList.remove('preview');
+    this.stateDetailMore = false;
   }
 }
