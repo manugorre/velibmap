@@ -21,7 +21,6 @@ export class AppComponent {
   }
 
   ngOnInit(){
-
     //nav
     this.stateNav = false;
     this._nav = document.getElementsByClassName('js-nav')[0];

@@ -17,7 +17,7 @@ import {Velib}              from '../services/velib';
 })
 export class MapComponent{
   @ViewChild(VelibDetailComponent)
-  _velibDetail: VelibDetailComponent
+  _velibDetail: VelibDetailComponent;
 
   map: Object;
   mc: Object;
