@@ -1,3 +1,3 @@
 export class Velib {
-  constructor(public id: number, public name: string) { }
+  constructor(public number: number, public name: string) { }
 }

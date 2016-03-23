@@ -58,7 +58,12 @@ export class VelibDetailComponent {
           this._detailVelib.classList.remove('visible');
           this.velibOpen();
           console.log('Updated List: ', this.velib);
-          // callback(data);
+          let checkFav = this.checkFav(this.velib.number);
+          if(checkFav) {
+            this._detailVelib.className += ' fav';
+          } else {
+            this._detailVelib.classList.remove('fav');
+          }
         });
       },
       err => {
@@ -99,12 +104,44 @@ export class VelibDetailComponent {
     this.stateDetailMore = false;
   }
 
-  favori(){
-    console.log('favori');
-    if (true) {
-      this._detailVelib.classList += ' fav';
-    } else {
+  favori(e){
+    let that = this;
+    let favStorage = localStorage.getItem('favorite');
+    var favoriteToSave = JSON.parse(favStorage) ? JSON.parse(favStorage) : [];
+
+    if(this.hasClass(this._detailVelib, 'fav')) {
+      var result = favoriteToSave.findIndex( x => x.number === that.velib.number )
+
+      if (favoriteToSave.length <= 1) {
+        favoriteToSave.shift();
+      } else {
+        favoriteToSave.splice(result, 1);
+      }
+
       this._detailVelib.classList.remove('fav');
+    }else {
+      let newFavorite = {
+        'number': this.velib.number
+      }
+
+      favoriteToSave.push(newFavorite);
+
+      this._detailVelib.classList += ' fav';
     }
+    console.log('after', favoriteToSave);
+    localStorage.setItem('favorite', JSON.stringify(favoriteToSave))
+  }
+
+  checkFav(id:number) {
+    let favStorage = localStorage.getItem('favorite')
+
+    if (favStorage !== null) {
+      return favStorage.indexOf(id.toString()) > -1
+    }
+    return false
+  }
+
+  hasClass(element, cls) {
+    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
   }
 }
