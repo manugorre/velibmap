@@ -20,30 +20,11 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
         <i class="expand material-icons dp48">more_vert</i>
       </div>
       <div class="js-scroll detail-content">
-        <ul>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-            <li>...</li>
-        </ul>
+        <div>
+          <div class="favori" (click)="favori()">
+            <i class="material-icons dp48">star</i>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -108,6 +89,7 @@ export class VelibDetailComponent {
     this._detailVelib.className += ' preview';
     this.stateDetailMore = true;
     this.scrollDetailMore = new IScroll('.js-scroll', {
+      click: true,
       mouseWheel: true
     });
   }
@@ -115,5 +97,14 @@ export class VelibDetailComponent {
   expandClose(){
     this._detailVelib.classList.remove('preview');
     this.stateDetailMore = false;
+  }
+
+  favori(){
+    console.log('favori');
+    if (true) {
+      this._detailVelib.classList += ' fav';
+    } else {
+      this._detailVelib.classList.remove('fav');
+    }
   }
 }
