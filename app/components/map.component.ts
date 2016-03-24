@@ -1,26 +1,29 @@
-import {Component} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
 
-import {Velib}              from '../classes/velib';
-// import {VelibListComponent} from './velib-list.component';
+import {VelibDetailComponent} from './velib-detail.components';
 import {VelibService}       from '../services/velib.service';
+import {Velib}              from '../services/velib';
 
 @Component({
   selector: 'map-app',
   templateUrl: 'app/templates/map.html',
-  // directives:[VelibListComponent],
+  directives: [VelibDetailComponent],
   providers: [
     HTTP_PROVIDERS,
-    VelibService,
+    VelibService
   ]
 })
 export class MapComponent {
+  @ViewChild(VelibDetailComponent)
+  _velibDetail: VelibDetailComponent;
 
   map: Object;
+  mc: Object;
+  geoLocMarker: Object;
   directionsService: Object;
   directionsDisplay: Object;
-  velibs: Object;
 
   mapOption: any = {
     center: {
@@ -30,35 +33,74 @@ export class MapComponent {
     scrollwheel: true,
     zoom: 12,
     zoomControl: false,
+    streetViewControl: false,
+    disableDefaultUI: true,
     mapTypeControl: false
   };
 
-  inputFrom: Object;
-  inputTo: Object;
+  mcOptions: any = {
+    gridSize: 50, maxZoom: 15
+  };
+
+  errorMessage: string;
+  velibs: Velib[];
+  velib: Velib;
+
+  loading: Boolean;
+
+  _app: Element;
+
+  autocompleteSearch: Object;
+  _inputSearch: Element;
+  _inputFrom: Element;
+  _inputTo: Element;
 
   constructor(private _velibService: VelibService) {
-    this.getVelibs();
-    this.events();
+
   }
 
   ngOnInit() {
+    const app = this;
+    this._app = document.getElementsByTagName('my-app')[0];
+
     this.directionsService = new google.maps.DirectionsService;
     this.directionsDisplay = new google.maps.DirectionsRenderer;
 
     this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
     this.directionsDisplay.setMap(this.map);
 
-    // this.geoLoc();
-    this.autoComplete();
+    this._inputSearch = document.getElementById('pac-input-search');
+    this._inputFrom = document.getElementById('pac-input-from');
+    this._inputTo = document.getElementById('pac-input-to');
+
+    this.autoComplete('search');
+    this.getVelibs(function(data) {
+      app.setMarkers();
+    });
   }
 
-  autoComplete() {
-    this.inputFrom = document.getElementById('pac-input-from');
-    this.inputTo = document.getElementById('pac-input-to');
+  autoComplete(target: String) {
+    var that = this;
 
-    var autocompleteFrom = new google.maps.places.Autocomplete(this.inputFrom);
-    var autocompleteTo = new google.maps.places.Autocomplete(this.inputTo);
-    // autocomplete.bindTo('bounds', this.map);
+    if (target === 'search') {
+        this.autocompleteSearch = new google.maps.places.Autocomplete(this._inputSearch);
+        this.autocompleteSearch.addListener('place_changed', function() {
+          var place = that.autocompleteSearch.getPlace();
+            if (!place.geometry) {
+              window.alert("Autocomplete's returned place contains no geometry");
+              return;
+            }
+            if (place.geometry.viewport) {
+              that.map.fitBounds(place.geometry.viewport);
+            } else {
+              that.map.setCenter(place.geometry.location);
+              that.map.setZoom(15);
+            }
+        });
+    } else if (target === 'itinary'){
+      var autocompleteFrom = new google.maps.places.Autocomplete(this._inputFrom);
+      var autocompleteTo = new google.maps.places.Autocomplete(this._inputTo);
+    }
   }
 
   events() {
@@ -74,7 +116,44 @@ export class MapComponent {
 
   }
 
-  calculateRoute(dest, waypts){
+  setMarkers() {
+    const app = this;
+    let markers = [];
+    let velibs = this.velibs;
+
+    for (var key in velibs) {
+      markers[key] = new google.maps.Marker({
+        position: new google.maps.LatLng(velibs[key].position.lat, velibs[key].position.lng),
+        map: app.map,
+        flat: true,
+        id: velibs[key].number,
+        title: velibs[key].name,
+        draggable: false
+      });
+      // var iconFile = 'http://maps.google.com/mapfiles/ms/icons/'+marker_color+'-dot.png';
+      // markers[key].setIcon(iconFile);
+
+      google.maps.event.addListener(markers[key], 'click', function(event) {
+        app._velibDetail.getVelib(this.id);
+      });
+    }
+    var markerCluster = new MarkerClusterer(app.map, markers, app.mcOptions);
+  }
+
+  getVelibs(callback) {
+    var app = this;
+    this._velibService.getVelibs().subscribe(
+      data => {
+        app.velibs = data;
+        callback(data);
+      },
+      err => {
+        console.error(err)
+      }
+      );
+  }
+
+  calculateRoute(dest, waypts) {
     var oThis = this;
 
     oThis.directionsService.route({
@@ -127,20 +206,20 @@ export class MapComponent {
   getVelibAroundPoint(dest, callback) {
     var oThis = this;
 
-    var station:Object;
+    var station: Object;
 
     var r = new XMLHttpRequest();
 
     r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest + "'", true);
 
-    r.onreadystatechange = function () {
+    r.onreadystatechange = function() {
       if (r.readyState != 4 || r.status != 200) return;
 
       var response = JSON.parse(r.responseText);
 
       var lat = response.results[0].geometry.location.lat;
       var lng = response.results[0].geometry.location.lng;
-      var center = {lat: lat, lng: lng};
+      var center = { lat: lat, lng: lng };
 
       var circleParam = {
         strokeColor: '#FF0000',
@@ -169,7 +248,7 @@ export class MapComponent {
 
           var isWithinRectangle = cityCircle.getBounds().contains(point);
 
-          if(isWithinRectangle){
+          if (isWithinRectangle) {
 
             var waypt = {
               location: that.address,
@@ -182,10 +261,10 @@ export class MapComponent {
             test1 = true;
           }
         }
-        if(test1 === false){
+        if (test1 === false) {
           circleParam.radius += 20;
           console.log('more distance');
-        }else{
+        } else {
           isVelibNearMe = true;
           console.log('found');
         }
@@ -198,27 +277,42 @@ export class MapComponent {
 
   }
 
-  geoLoc() {
+  geolocate() {
+    console.log('geoloc')
     var oThis = this;
     // Try HTML5 geolocation.
-    var image = 'dist/images/geoloc.gif';
-    var marker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+    var image = 'dist/images/geoloc.png';
+
+    if(this.geoLocMarker !== undefined){
+      this.geoLocMarker.setMap(null);
+      this.geoLocMarker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+    }else{
+      this.geoLocMarker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+    }
 
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(function(position) {
+      oThis.loadStart()
+      navigator.geolocation.getCurrentPosition(function(position) {
         var pos = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
+        var changed = true;
 
-        marker.setPosition(pos);
-        oThis.map.setCenter(pos);
-      }, function() {
-          this.handleLocationError(true, marker, oThis.map.getCenter());
+        oThis.geoLocMarker.setPosition(pos);
+        oThis.map.panTo(pos);
+
+        oThis.map.addListener('idle', function() {
+          if (changed) {
+            oThis.map.setZoom(15);
+            changed = false;
+          }
         });
+        oThis.loadEnd()
+      });
     } else {
       // Browser doesn't support Geolocation
-      this.handleLocationError(false, marker, oThis.map.getCenter());
+      this.handleLocationError(false, oThis.geoLocMarker, oThis.map.getCenter());
     }
   }
 
@@ -229,8 +323,18 @@ export class MapComponent {
       'Error: Your browser doesn\'t support geolocation.');
   }
 
-  getVelibs() {
-    this.velibs = this._velibService.getVelibs();
+  loadStart(){
+    this._app.className += ' loading';
+    this.loading = true;
+  }
+
+  loadEnd(){
+    this._app.classList.remove('loading');
+    this.loading = false;
+  }
+
+  hasClass(el, cls) {
+    return el.className && new RegExp("(\\s|^)" + cls + "(\\s|$)").test(el.className);
   }
 
 }
