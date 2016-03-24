@@ -3,6 +3,9 @@ body {
 	overflow: hidden;
 	-webkit-overflow-scrolling: touch;
 }
+.loading .header .loader{
+	visibility: visible;
+}
 .header {
 	position: absolute;
 	top: 15px;
@@ -16,6 +19,19 @@ body {
 		background: white;
 		border-radius: 2px;
 		box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px;
+	}
+	.loader {
+		background-image: url("../images/spinner_color.gif");
+		background-size: cover;
+		background-repeat: no-repeat;
+		width: 22px;
+		height: 22px;
+		display: inline-block;
+		position: absolute;
+		top: 50%;
+		margin-top: -11px;
+		right: 29px;
+		visibility: hidden;
 	}
 }
 .visible {

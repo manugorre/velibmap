@@ -21,6 +21,7 @@ export class MapComponent {
 
   map: Object;
   mc: Object;
+  geoLocMarker: Object;
   directionsService: Object;
   directionsDisplay: Object;
 
@@ -48,12 +49,17 @@ export class MapComponent {
   velibs: Velib[];
   velib: Velib;
 
+  loading: Boolean;
+
+  _app: Element;
+
   constructor(private _velibService: VelibService) {
 
   }
 
   ngOnInit() {
     const app = this;
+    this._app = document.getElementsByTagName('my-app')[0];
 
     this.directionsService = new google.maps.DirectionsService;
     this.directionsDisplay = new google.maps.DirectionsRenderer;
@@ -61,7 +67,6 @@ export class MapComponent {
     this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
     this.directionsDisplay.setMap(this.map);
 
-    // this.geoLoc();
     // this.autoComplete();
     this.getVelibs(function(data) {
       app.setMarkers();
@@ -256,9 +261,16 @@ export class MapComponent {
     var oThis = this;
     // Try HTML5 geolocation.
     var image = 'dist/images/geoloc.png';
-    var marker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+
+    if(this.geoLocMarker !== undefined){
+      this.geoLocMarker.setMap(null);
+      this.geoLocMarker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+    }else{
+      this.geoLocMarker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
+    }
 
     if (navigator.geolocation) {
+      oThis.loadStart()
       navigator.geolocation.getCurrentPosition(function(position) {
         var pos = {
           lat: position.coords.latitude,
@@ -266,7 +278,7 @@ export class MapComponent {
         };
         var changed = true;
 
-        marker.setPosition(pos);
+        oThis.geoLocMarker.setPosition(pos);
         oThis.map.panTo(pos);
 
         oThis.map.addListener('idle', function() {
@@ -275,11 +287,11 @@ export class MapComponent {
             changed = false;
           }
         });
-
+        oThis.loadEnd()
       });
     } else {
       // Browser doesn't support Geolocation
-      this.handleLocationError(false, marker, oThis.map.getCenter());
+      this.handleLocationError(false, oThis.geoLocMarker, oThis.map.getCenter());
     }
   }
 
@@ -288,6 +300,16 @@ export class MapComponent {
     infoWindow.setContent(browserHasGeolocation ?
       'Error: The Geolocation service failed.' :
       'Error: Your browser doesn\'t support geolocation.');
+  }
+
+  loadStart(){
+    this._app.className += ' loading';
+    this.loading = true;
+  }
+
+  loadEnd(){
+    this._app.classList.remove('loading');
+    this.loading = false;
   }
 
   hasClass(el, cls) {
