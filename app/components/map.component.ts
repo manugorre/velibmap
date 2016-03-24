@@ -42,9 +42,6 @@ export class MapComponent {
     gridSize: 50, maxZoom: 15
   };
 
-  inputFrom: Object;
-  inputTo: Object;
-
   errorMessage: string;
   velibs: Velib[];
   velib: Velib;
@@ -52,6 +49,11 @@ export class MapComponent {
   loading: Boolean;
 
   _app: Element;
+
+  autocompleteSearch: Object;
+  _inputSearch: Element;
+  _inputFrom: Element;
+  _inputTo: Element;
 
   constructor(private _velibService: VelibService) {
 
@@ -67,19 +69,38 @@ export class MapComponent {
     this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
     this.directionsDisplay.setMap(this.map);
 
-    // this.autoComplete();
+    this._inputSearch = document.getElementById('pac-input-search');
+    this._inputFrom = document.getElementById('pac-input-from');
+    this._inputTo = document.getElementById('pac-input-to');
+
+    this.autoComplete('search');
     this.getVelibs(function(data) {
       app.setMarkers();
     });
   }
 
-  autoComplete() {
-    this.inputFrom = document.getElementById('pac-input-from');
-    this.inputTo = document.getElementById('pac-input-to');
+  autoComplete(target: String) {
+    var that = this;
 
-    var autocompleteFrom = new google.maps.places.Autocomplete(this.inputFrom);
-    var autocompleteTo = new google.maps.places.Autocomplete(this.inputTo);
-    // autocomplete.bindTo('bounds', this.map);
+    if (target === 'search') {
+        this.autocompleteSearch = new google.maps.places.Autocomplete(this._inputSearch);
+        this.autocompleteSearch.addListener('place_changed', function() {
+          var place = that.autocompleteSearch.getPlace();
+            if (!place.geometry) {
+              window.alert("Autocomplete's returned place contains no geometry");
+              return;
+            }
+            if (place.geometry.viewport) {
+              that.map.fitBounds(place.geometry.viewport);
+            } else {
+              that.map.setCenter(place.geometry.location);
+              that.map.setZoom(15);
+            }
+        });
+    } else if (target === 'itinary'){
+      var autocompleteFrom = new google.maps.places.Autocomplete(this._inputFrom);
+      var autocompleteTo = new google.maps.places.Autocomplete(this._inputTo);
+    }
   }
 
   events() {

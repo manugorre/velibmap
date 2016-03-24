@@ -3,7 +3,7 @@
   <div>
     <a (click)="navOpen()" class="ico-nav"><i class="material-icons">menu</i></a>
     <div class="input">
-
+      <input id="pac-input-search" type="text" class="form-control" placeholder="Rechercher" required>
     </div>
     <i class="loader"></i>
   </div>
@@ -11,7 +11,6 @@
 <nav class="js-nav">
   <div class="js-drag-menu"></div>
   <div class="view js-scroll-menu">
-		<a (click)="navClose()" class="ico-nav"><span></span></a>
   </div>
 	<div (click)="navClose()" class="overlay">
 
