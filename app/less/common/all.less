@@ -1,4 +1,73 @@
-html, body{
+html,
+body {
 	overflow: hidden;
 	-webkit-overflow-scrolling: touch;
+}
+.header {
+	position: absolute;
+	top: 15px;
+	width: 100%;
+	height: 50px;
+	display: block;
+	> div {
+		display: block;
+		height: 100%;
+		margin: 0 15px;
+		background: white;
+		border-radius: 2px;
+		box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px;
+	}
+}
+.visible {
+	.quick-access {
+		-ms-transform: translateY(-12vh);
+		-webkit-transform: translateY(-12vh);
+		transform: translateY(-12vh);
+	}
+}
+.visible.preview {
+	.quick-access {
+		-ms-transform: translateY(-50vh);
+		-webkit-transform: translateY(-50vh);
+		transform: translateY(-50vh);
+	}
+}
+.quick-access {
+	position: absolute;
+	bottom: 5vh;
+	right: 25px;
+	width: 50px;
+	-ms-transition: -ms-transform 0.3s;
+	-webkit-transition: -webkit-transform 0.3s;
+	transition: transform 0.3s;
+	.geolocate,
+	.itinary {
+		width: 50px;
+		height: 50px;
+		display: inline-block;
+		text-align: center;
+		vertical-align: middle;
+		border-radius: 50px;
+		box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px;
+		i {
+			line-height: 50px;
+			font-size: 22px;
+		}
+	}
+	.geolocate {
+		background: white;
+		margin-bottom: 10px;
+		&:active {
+			background: #efefef;
+		}
+	}
+	.itinary {
+		background: #0091EA;
+		i {
+			color: white;
+		}
+		&:active {
+			background: #047fca;
+		}
+	}
 }

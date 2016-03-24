@@ -33,6 +33,7 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
 export class VelibDetailComponent {
   velib: Velib;
 
+  _app: Element;
   stateDetail: Boolean;
   stateDetailMore: Boolean;
   _detailVelib: Element;
@@ -46,6 +47,7 @@ export class VelibDetailComponent {
   ngOnInit(){
     this.stateDetail = false;
     this.stateDetailMore = false;
+    this._app = document.getElementsByTagName('map-app')[0];
     this._detailVelib = document.getElementsByClassName('js-detail-velib')[0];
   }
 
@@ -55,7 +57,7 @@ export class VelibDetailComponent {
       data => {
         this._zone.run(() => {
           this.velib = data;
-          this._detailVelib.classList.remove('visible');
+          this._app.classList.remove('visible');
           this.velibOpen();
           console.log('Updated List: ', this.velib);
           let checkFav = this.checkFav(this.velib.number);
@@ -73,12 +75,12 @@ export class VelibDetailComponent {
 	}
 
   velibOpen(){
-    this._detailVelib.className += ' visible';
+    this._app.className += ' visible';
     this.stateDetail = true;
   }
 
   velibClose(){
-    this._detailVelib.classList.remove('visible');
+    this._app.classList.remove('visible');
     this.stateDetail = false;
   }
 
@@ -91,7 +93,7 @@ export class VelibDetailComponent {
   }
 
   expandOpen(){
-    this._detailVelib.className += ' preview';
+    this._app.className += ' preview';
     this.stateDetailMore = true;
     this.scrollDetailMore = new IScroll('.js-scroll', {
       click: true,
@@ -100,7 +102,7 @@ export class VelibDetailComponent {
   }
 
   expandClose(){
-    this._detailVelib.classList.remove('preview');
+    this._app.classList.remove('preview');
     this.stateDetailMore = false;
   }
 

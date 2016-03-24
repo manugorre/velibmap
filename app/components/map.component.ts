@@ -15,7 +15,7 @@ import {Velib}              from '../services/velib';
     VelibService
   ]
 })
-export class MapComponent{
+export class MapComponent {
   @ViewChild(VelibDetailComponent)
   _velibDetail: VelibDetailComponent;
 
@@ -45,8 +45,8 @@ export class MapComponent{
   inputTo: Object;
 
   errorMessage: string;
-  velibs:Velib[];
-  velib:Velib;
+  velibs: Velib[];
+  velib: Velib;
 
   constructor(private _velibService: VelibService) {
 
@@ -63,7 +63,7 @@ export class MapComponent{
 
     // this.geoLoc();
     // this.autoComplete();
-    this.getVelibs(function(data){
+    this.getVelibs(function(data) {
       app.setMarkers();
     });
   }
@@ -90,19 +90,19 @@ export class MapComponent{
 
   }
 
-  setMarkers(){
+  setMarkers() {
     const app = this;
     let markers = [];
     let velibs = this.velibs;
 
     for (var key in velibs) {
       markers[key] = new google.maps.Marker({
-              position: new google.maps.LatLng(velibs[key].position.lat, velibs[key].position.lng),
-              map: app.map,
-              flat: true,
-              id: velibs[key].number,
-              title: velibs[key].name,
-              draggable: false
+        position: new google.maps.LatLng(velibs[key].position.lat, velibs[key].position.lng),
+        map: app.map,
+        flat: true,
+        id: velibs[key].number,
+        title: velibs[key].name,
+        draggable: false
       });
       // var iconFile = 'http://maps.google.com/mapfiles/ms/icons/'+marker_color+'-dot.png';
       // markers[key].setIcon(iconFile);
@@ -114,7 +114,7 @@ export class MapComponent{
     var markerCluster = new MarkerClusterer(app.map, markers, app.mcOptions);
   }
 
-	getVelibs(callback){
+  getVelibs(callback) {
     var app = this;
     this._velibService.getVelibs().subscribe(
       data => {
@@ -124,10 +124,10 @@ export class MapComponent{
       err => {
         console.error(err)
       }
-    );
-	}
+      );
+  }
 
-  calculateRoute(dest, waypts){
+  calculateRoute(dest, waypts) {
     var oThis = this;
 
     oThis.directionsService.route({
@@ -180,20 +180,20 @@ export class MapComponent{
   getVelibAroundPoint(dest, callback) {
     var oThis = this;
 
-    var station:Object;
+    var station: Object;
 
     var r = new XMLHttpRequest();
 
     r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest + "'", true);
 
-    r.onreadystatechange = function () {
+    r.onreadystatechange = function() {
       if (r.readyState != 4 || r.status != 200) return;
 
       var response = JSON.parse(r.responseText);
 
       var lat = response.results[0].geometry.location.lat;
       var lng = response.results[0].geometry.location.lng;
-      var center = {lat: lat, lng: lng};
+      var center = { lat: lat, lng: lng };
 
       var circleParam = {
         strokeColor: '#FF0000',
@@ -222,7 +222,7 @@ export class MapComponent{
 
           var isWithinRectangle = cityCircle.getBounds().contains(point);
 
-          if(isWithinRectangle){
+          if (isWithinRectangle) {
 
             var waypt = {
               location: that.address,
@@ -235,10 +235,10 @@ export class MapComponent{
             test1 = true;
           }
         }
-        if(test1 === false){
+        if (test1 === false) {
           circleParam.radius += 20;
           console.log('more distance');
-        }else{
+        } else {
           isVelibNearMe = true;
           console.log('found');
         }
@@ -251,24 +251,32 @@ export class MapComponent{
 
   }
 
-  geoLoc() {
+  geolocate() {
+    console.log('geoloc')
     var oThis = this;
     // Try HTML5 geolocation.
-    var image = 'dist/images/geoloc.gif';
+    var image = 'dist/images/geoloc.png';
     var marker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
 
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(function(position) {
+      navigator.geolocation.getCurrentPosition(function(position) {
         var pos = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
+        var changed = true;
 
         marker.setPosition(pos);
-        oThis.map.setCenter(pos);
-      }, function() {
-          this.handleLocationError(true, marker, oThis.map.getCenter());
+        oThis.map.panTo(pos);
+
+        oThis.map.addListener('idle', function() {
+          if (changed) {
+            oThis.map.setZoom(15);
+            changed = false;
+          }
         });
+
+      });
     } else {
       // Browser doesn't support Geolocation
       this.handleLocationError(false, marker, oThis.map.getCenter());
