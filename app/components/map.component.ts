@@ -153,6 +153,24 @@ export class MapComponent {
       );
   }
 
+  itinary(){
+    console.log('itinary');
+    this._app.className += ' itinary';
+  }
+
+  hideItinary(){
+    this._app.classList.remove('itinary');
+    this._inputFrom.value = "";
+    this._inputTo.value = "";
+  }
+
+  reverseItinary(){
+    let from:String = this._inputFrom.value;
+    let to:String =  this._inputTo.value;
+    this._inputFrom.value = to;
+    this._inputTo.value = from;
+  }
+
   calculateRoute(dest, waypts) {
     var oThis = this;
 

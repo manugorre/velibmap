@@ -1,17 +1,20 @@
 <div id="map"></div>
-<!-- <div class="box__route">
-  <form id="route" style="display: none;">
+<div class="box-route">
+  <div (click)="hideItinary()" class="hideItinary tools">
+    <i class="material-icons">arrow_back</i>
+  </div>
+  <form id="route">
     <div class="form-group">
-      <label for="routeFrom">From</label>
-      <input id="pac-input-from" type="text" class="form-control" required>
+      <input id="pac-input-from" type="text" class="form-control" placeholder="Départ" required>
     </div>
     <div class="form-group">
-      <label for="routeTo">To</label>
-      <input id="pac-input-to" type="text" class="form-control" required>
+      <input id="pac-input-to" type="text" class="form-control" placeholder="Destination" required>
     </div>
-    <button type="submit" class="btn btn-default">Submit</button>
   </form>
-</div> -->
+  <div (click)="reverseItinary()" class="reverseItinary tools">
+    <i class="material-icons">import_export</i>
+  </div>
+</div>
 <div class="quick-access">
   <div (click)="geolocate()" class="js-geolocate geolocate"><i class="material-icons">my_location</i></div>
   <div (click)="itinary()" class="js-itinary itinary"><i class="material-icons">directions</i></div>
