@@ -61,7 +61,7 @@ export class MapComponent {
 
   ngOnInit() {
     const app = this;
-    this._app = document.getElementsByTagName('my-app')[0];
+    this._app = document.getElementsByTagName('body')[0];
 
     this.directionsService = new google.maps.DirectionsService;
     this.directionsDisplay = new google.maps.DirectionsRenderer;
@@ -130,8 +130,6 @@ export class MapComponent {
         title: velibs[key].name,
         draggable: false
       });
-      // var iconFile = 'http://maps.google.com/mapfiles/ms/icons/'+marker_color+'-dot.png';
-      // markers[key].setIcon(iconFile);
 
       google.maps.event.addListener(markers[key], 'click', function(event) {
         app._velibDetail.getVelib(this.id);
@@ -156,6 +154,7 @@ export class MapComponent {
   itinary(){
     console.log('itinary');
     this._app.className += ' itinary';
+    this.autoComplete('itinary');
   }
 
   hideItinary(){
