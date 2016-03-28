@@ -22,8 +22,8 @@ export class MapComponent {
   map: Object;
   mc: Object;
   geoLocMarker: Object;
-  directionsService: Object;
-  directionsDisplay: Object;
+  directionsService;
+  directionArray = [];
 
   mapOption: any = {
     center: {
@@ -43,6 +43,9 @@ export class MapComponent {
   };
 
   errorMessage: string;
+  markers = [];
+  hiddenMarkers: Boolean = false;
+  markerCluster: Object;
   velibs: Velib[];
   velib: Velib;
 
@@ -54,7 +57,7 @@ export class MapComponent {
   _inputSearch: Element;
   _inputFrom: Element;
   _inputTo: Element;
-  itinaryState:Boolean = true;
+  itinaryState: Boolean = false;
 
   constructor(private _velibService: VelibService) {
 
@@ -64,11 +67,7 @@ export class MapComponent {
     const app = this;
     this._app = document.getElementsByTagName('body')[0];
 
-    this.directionsService = new google.maps.DirectionsService;
-    this.directionsDisplay = new google.maps.DirectionsRenderer;
-
     this.map = new google.maps.Map(document.getElementById('map'), this.mapOption);
-    this.directionsDisplay.setMap(this.map);
 
     this._inputSearch = document.getElementById('pac-input-search');
     this._inputFrom = document.getElementById('pac-input-from');
@@ -85,46 +84,45 @@ export class MapComponent {
     var that = this;
 
     if (target === 'search') {
-        this.autocompleteSearch = new google.maps.places.Autocomplete(this._inputSearch);
-        this.autocompleteSearch.addListener('place_changed', function() {
-          var place = that.autocompleteSearch.getPlace();
-            if (!place.geometry) {
-              window.alert("Autocomplete's returned place contains no geometry");
-              return;
-            }
-            if (place.geometry.viewport) {
-              that.map.fitBounds(place.geometry.viewport);
-            } else {
-              that.map.setCenter(place.geometry.location);
-              that.map.setZoom(15);
-            }
-        });
-    } else if (target === 'itinary'){
+      this.autocompleteSearch = new google.maps.places.Autocomplete(this._inputSearch);
+      this.autocompleteSearch.addListener('place_changed', function() {
+        var place = that.autocompleteSearch.getPlace();
+        if (!place.geometry) {
+          window.alert("Autocomplete's returned place contains no geometry");
+          return;
+        }
+        if (place.geometry.viewport) {
+          that.map.fitBounds(place.geometry.viewport);
+        } else {
+          that.map.setCenter(place.geometry.location);
+          that.map.setZoom(15);
+        }
+      });
+    } else if (target === 'itinary') {
       var autocompleteFrom = new google.maps.places.Autocomplete(this._inputFrom);
       var autocompleteTo = new google.maps.places.Autocomplete(this._inputTo);
     }
   }
 
   setMarkers() {
-    const app = this;
-    let markers = [];
+    let _this = this;
     let velibs = this.velibs;
 
     for (var key in velibs) {
-      markers[key] = new google.maps.Marker({
+      this.markers[key] = new google.maps.Marker({
         position: new google.maps.LatLng(velibs[key].position.lat, velibs[key].position.lng),
-        map: app.map,
+        map: _this.map,
         flat: true,
         id: velibs[key].number,
         title: velibs[key].name,
         draggable: false
       });
 
-      google.maps.event.addListener(markers[key], 'click', function(event) {
-        app._velibDetail.getVelib(this.id);
+      google.maps.event.addListener(this.markers[key], 'click', function(event) {
+        _this._velibDetail.getVelib(this.id);
       });
     }
-    var markerCluster = new MarkerClusterer(app.map, markers, app.mcOptions);
+    this.markerCluster = new MarkerClusterer(this.map, this.markers, this.mcOptions);
   }
 
   getVelibs(callback) {
@@ -132,7 +130,7 @@ export class MapComponent {
     var key = 'velibs';
     var expirationMS = 10 * 60 * 1000;
     var localVelibs = localStorage.getItem(key);
-        localVelibs = JSON.parse(localVelibs);
+    localVelibs = JSON.parse(localVelibs);
 
     if (localVelibs !== null && new Date().getTime() < localVelibs.timestamp) {
       _this.velibs = JSON.parse(localVelibs.data);
@@ -140,16 +138,16 @@ export class MapComponent {
     } else {
       this._velibService.getVelibs().subscribe(
         data => {
-          var toSave = {data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS};
+          var toSave = { data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS };
           localStorage.setItem(key, JSON.stringify(toSave));
 
-		      _this.velibs = data;
+          _this.velibs = data;
           callback(data);
         },
         err => {
           console.error(err)
         }
-      );
+        );
     }
   }
 
@@ -159,74 +157,128 @@ export class MapComponent {
     form.addEventListener('submit', (e) => {
       e.stopPropagation();
       e.stopImmediatePropagation();
+
       var dest = [];
+
       dest.push(e.target[0].value)
       dest.push(e.target[1].value)
+
       this.getWaypts(dest);
     });
   }
 
   itinary() {
     this._app.className += ' itinary';
+    this._app.classList.remove('visible');
     this._app.classList.remove('preview');
     this.itinaryState = true;
     this.autoComplete('itinary');
     this.events();
+    this.hideMarkers();
   }
 
-  hideItinary(){
+  hideItinary() {
     this._app.classList.remove('itinary');
-    this.itinaryState = true;
+    this.itinaryState = false;
     this._inputFrom.value = "";
     this._inputTo.value = "";
+    for (var k in this.directionArray) {
+      this.directionArray[k].setMap(null);
+    }
+    this.showMarkers();
   }
 
-  reverseItinary(){
-    let from:String = this._inputFrom.value;
-    let to:String =  this._inputTo.value;
+  reverseItinary() {
+    let from: String = this._inputFrom.value;
+    let to: String = this._inputTo.value;
     this._inputFrom.value = to;
     this._inputTo.value = from;
   }
 
-  calculateRoute(dest, waypts) {
-    var oThis = this;
+  calculateRoute(itinary) {
+    this.directionsService = new google.maps.DirectionsService();
+    var requestArray = [];
+    var itinaryFull = [];
+    var _this = this;
+    var cur = 0;
+    var start;
+    var end;
+    var travelMode;
 
-    oThis.directionsService.route({
-      origin: dest[0],
-      destination: dest[1],
-      waypoints: waypts,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.WALKING
-    }, function(response, status) {
-        if (status === google.maps.DirectionsStatus.OK) {
-          oThis.directionsDisplay.setDirections(response);
-          var route = response.routes[0];
-          console.log(route);
-          // var summaryPanel = document.getElementById('directions-panel');
-          // summaryPanel.innerHTML = '';
-          // // For each route, display summary information.
-          // for (var i = 0; i < route.legs.length; i++) {
-          //   var routeSegment = i + 1;
-          //   summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
-          //   summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
-          //   summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-          //   summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
-          // }
-        } else {
-          window.alert('Directions request failed due to ' + status);
-        }
-      });
+    for (let i = 0; i < 3; i++) {
+      if (i === 0) {
+        console.log(itinary[0].direction.address, itinary[0].station.address);
+
+        travelMode = google.maps.TravelMode.WALKING
+
+        start = new google.maps.LatLng(
+          itinary[0].direction.position.lat, itinary[0].direction.position.lng);
+        end = new google.maps.LatLng(
+          itinary[0].station.position.lat, itinary[0].station.position.lng);
+
+      } else if (i === 1) {
+        console.log(itinary[0].station.address, itinary[1].station.address);
+
+        travelMode = google.maps.TravelMode.BICYCLING
+
+        start = new google.maps.LatLng(
+          itinary[0].station.position.lat, itinary[0].station.position.lng);
+        end = new google.maps.LatLng(
+          itinary[1].station.position.lat, itinary[1].station.position.lng);
+
+      } else if (i === 2) {
+        console.log(itinary[1].station.address, itinary[1].direction.address);
+
+        travelMode = google.maps.TravelMode.WALKING
+
+        start = new google.maps.LatLng(
+          itinary[1].station.position.lat, itinary[1].station.position.lng);
+        end = new google.maps.LatLng(
+          itinary[1].direction.position.lat, itinary[1].direction.position.lng);
+      }
+      var request = {
+        origin: start,
+        destination: end,
+        travelMode: travelMode
+      };
+      requestArray.push(request);
+    }
+
+    if (requestArray.length > 0) {
+      _this.directionsService.route(requestArray[cur], directionResults);
+    }
+
+    function directionResults(result, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        _this.directionArray[cur] = new google.maps.DirectionsRenderer();
+        _this.directionArray[cur].setMap(_this.map);
+        _this.directionArray[cur].setDirections(result);
+        itinaryFull.push(result);
+      }
+      cur++;
+      if (cur < requestArray.length) {
+        _this.directionsService.route(requestArray[cur], directionResults);
+      }else{
+        _this.setItinaryDom(itinaryFull);
+      }
+    }
+  }
+
+  setItinaryDom(data){
+    var durationTotal = data[0].routes[0].legs[0].duration.value +
+                        data[1].routes[0].legs[0].duration.value +
+                        data[2].routes[0].legs[0].duration.value;
+
+    var distanceTotal = data[0].routes[0].legs[0].distance.value +
+                        data[1].routes[0].legs[0].distance.value +
+                        data[2].routes[0].legs[0].distance.value;
+    console.log('data', data);
+
   }
 
   getWaypts(dest) {
-    var waypts = [];
-
-    this.getVelibAroundPoint(dest, (waypt) => {
-      if (waypt.length === dest.length) {
-        console.log('READYYYY MOTHER FOCKER');
-        console.log(dest, waypt)
-        // oThis.calculateRoute(dest, waypts);
-      }
+    this.getVelibAroundPoint(dest, (itinary) => {
+      this.calculateRoute(itinary);
     });
   }
 
@@ -234,11 +286,11 @@ export class MapComponent {
     //TODO: - verif station ouverte
     //      - verif velib restant
 
-    var m:number = 0;
+    var m: number = 0;
     var stations = [];
     var _this = this;
 
-    function request(){
+    function request() {
       var r = new XMLHttpRequest();
       r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest[m] + "'", true);
       r.onreadystatechange = function() {
@@ -260,7 +312,7 @@ export class MapComponent {
           radius: 100
         };
 
-        var i:number = 0;
+        var i: number = 0;
         var isWithinRectangle = false;
 
         while (!isWithinRectangle) {
@@ -270,7 +322,13 @@ export class MapComponent {
 
           isWithinRectangle = cityCircle.getBounds().contains(point);
           if (isWithinRectangle) {
-            stations.push(that);
+            stations.push({
+              direction: {
+                address: dest[m],
+                position: center
+              },
+              station: that
+            });
           } else if (_this.velibs[i + 1] != undefined) {
             i++;
           } else {
@@ -295,10 +353,10 @@ export class MapComponent {
     var oThis = this;
     var image = 'dist/images/geoloc.png';
 
-    if(this.geoLocMarker !== undefined){
+    if (this.geoLocMarker !== undefined) {
       this.geoLocMarker.setMap(null);
       this.geoLocMarker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
-    }else{
+    } else {
       this.geoLocMarker = new google.maps.Marker({ map: oThis.map, icon: image, optimize: false });
     }
 
@@ -328,6 +386,14 @@ export class MapComponent {
     }
   }
 
+  showMarkers() {
+    this.markerCluster = new MarkerClusterer(this.map, this.markers, this.mcOptions);
+  }
+
+  hideMarkers() {
+    this.markerCluster.clearMarkers();
+  }
+
   handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
@@ -335,12 +401,12 @@ export class MapComponent {
       'Error: Your browser doesn\'t support geolocation.');
   }
 
-  loadStart(){
+  loadStart() {
     this._app.className += ' loading';
     this.loading = true;
   }
 
-  loadEnd(){
+  loadEnd() {
     this._app.classList.remove('loading');
     this.loading = false;
   }

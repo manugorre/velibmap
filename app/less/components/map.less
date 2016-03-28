@@ -33,6 +33,15 @@
 		}
 	}
 }
+.itinary-info {
+	height: 100%;
+	max-height: calc(100vh - 110px);
+	width: 100%;
+	background: white;
+	display: inline-block;
+	transform: translateY(-100%);
+	z-index: 0;
+}
 #route {
 	width: ~"calc(100% - 80px)";
 	display: inline-block;
@@ -40,7 +49,7 @@
 	.form-group:first-child {
 		margin-bottom: 10px;
 	}
-	.submit{
+	.submit {
 		display: none;
 	}
 	input {
@@ -53,7 +62,7 @@
 		color: white;
 		width: 100%;
 		outline: none;
-		&::-webkit-input-placeholder{
+		&::-webkit-input-placeholder {
 			color: rgba(255,255,255,0.6);
 		}
 	}

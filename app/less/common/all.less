@@ -1,38 +1,38 @@
-html,
-body {
+body,
+html {
 	overflow: hidden;
 	-webkit-overflow-scrolling: touch;
 }
-.loading .header .loader{
+.loading .header .loader, .loading .box-route .loader  {
 	visibility: visible;
 }
-.pac-container{
+.pac-container {
 	position: absolute;
-  top: 75px !important;
-  margin: 0px 15px !important;
-  left: 0 !important;
-  width: ~"calc(100% - 30px)" !important;
-  border-radius: 2px !important;
+	top: 75px !important;
+	margin: 0 15px !important;
+	left: 0 !important;
+	width: ~"calc(100% - 30px)" !important;
+	border-radius: 2px !important;
 	box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px !important;
-	.pac-item:first-child{
-		border-top: none
+	.pac-item:first-child {
+		border-top: none;
 	}
 }
-.itinary .pac-container{
+.itinary .pac-container {
 	width: ~"calc(100% - 80px)" !important;
 	left: 25px !important;
 	top: 125px !important;
 }
-.itinary .header{
+.itinary .header {
 	-ms-transform: translateX(-80px);
-  -webkit-transform: translateX(-80px);
-  transform: translateY(-80px);
+	-webkit-transform: translateX(-80px);
+	transform: translateY(-80px);
 }
-.header{
-	.input{
+.header {
+	.input {
 		display: block;
-	  margin: 0 50px;
-		input{
+		margin: 0 50px;
+		input {
 			margin: 0;
 			padding: 0;
 			border: 0;
@@ -74,21 +74,35 @@ body {
 		visibility: hidden;
 	}
 }
-body.itinary.visible .quick-access{
-  -ms-transform: translate3d(100px, -12vh, 0);
-  -webkit-transform: translate3d(100px, -12vh, 0);
-  transform: translate3d(100px, -12vh, 0);
+.box-route {
+	.loader {
+		background-image: url("../images/spinner_color.gif");
+		background-size: cover;
+		background-repeat: no-repeat;
+		width: 22px;
+		height: 22px;
+		display: inline-block;
+		position: absolute;
+		top: 64px;
+		left: 9px;
+		visibility: hidden;
+	}
 }
-body.itinary .quick-access{
-  -ms-transform: translate3d(100px, 0, 0);
-  -webkit-transform: translate3d(100px, 0, 0);
-  transform: translate3d(100px, 0, 0);
+body.itinary.visible .quick-access {
+	-ms-transform: translate3d(100px, -12vh, 0);
+	-webkit-transform: translate3d(100px, -12vh, 0);
+	transform: translate3d(100px, -12vh, 0);
+}
+body.itinary .quick-access {
+	-ms-transform: translate3d(100px, 0, 0);
+	-webkit-transform: translate3d(100px, 0, 0);
+	transform: translate3d(100px, 0, 0);
 }
 .visible {
 	.quick-access {
-		-ms-transform: translateY(-12vh);
-		-webkit-transform: translateY(-12vh);
-		transform: translateY(-12vh);
+		-ms-transform: translateY(-70px);
+		-webkit-transform: translateY(-70px);
+		transform: translateY(-70px);
 	}
 }
 .visible.preview {
