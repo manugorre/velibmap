@@ -54,6 +54,7 @@ export class MapComponent {
   _inputSearch: Element;
   _inputFrom: Element;
   _inputTo: Element;
+  itinaryState:Boolean = true;
 
   constructor(private _velibService: VelibService) {
 
@@ -74,6 +75,7 @@ export class MapComponent {
     this._inputTo = document.getElementById('pac-input-to');
 
     this.autoComplete('search');
+
     this.getVelibs(function(data) {
       app.setMarkers();
     });
@@ -103,19 +105,6 @@ export class MapComponent {
     }
   }
 
-  events() {
-    var form = document.getElementById('route');
-    var dest = [];
-    var oThis = this;
-
-    form.addEventListener('submit', function(e) {
-      dest[0] = oThis.inputFrom.value;
-      dest[1] = oThis.inputTo.value;
-      oThis.getWaypts(dest);
-    });
-
-  }
-
   setMarkers() {
     const app = this;
     let markers = [];
@@ -139,26 +128,53 @@ export class MapComponent {
   }
 
   getVelibs(callback) {
-    var app = this;
-    this._velibService.getVelibs().subscribe(
-      data => {
-        app.velibs = data;
-        callback(data);
-      },
-      err => {
-        console.error(err)
-      }
+    var _this = this;
+    var key = 'velibs';
+    var expirationMS = 10 * 60 * 1000;
+    var localVelibs = localStorage.getItem(key);
+        localVelibs = JSON.parse(localVelibs);
+
+    if (localVelibs !== null && new Date().getTime() < localVelibs.timestamp) {
+      _this.velibs = JSON.parse(localVelibs.data);
+      callback(_this.velibs);
+    } else {
+      this._velibService.getVelibs().subscribe(
+        data => {
+          var toSave = {data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS};
+          localStorage.setItem(key, JSON.stringify(toSave));
+
+		      _this.velibs = data;
+          callback(data);
+        },
+        err => {
+          console.error(err)
+        }
       );
+    }
   }
 
-  itinary(){
-    console.log('itinary');
+  events() {
+    var form = document.getElementById('route');
+
+    form.addEventListener('submit', (e) => {
+      var dest = [];
+      dest.push(e.target[0].value)
+      dest.push(e.target[1].value)
+      this.getWaypts(dest);
+    });
+  }
+
+  itinary() {
     this._app.className += ' itinary';
+    this._app.classList.remove('preview');
+    this.itinaryState = true;
     this.autoComplete('itinary');
+    this.events();
   }
 
   hideItinary(){
     this._app.classList.remove('itinary');
+    this.itinaryState = true;
     this._inputFrom.value = "";
     this._inputTo.value = "";
   }
@@ -201,97 +217,82 @@ export class MapComponent {
   }
 
   getWaypts(dest) {
-
-    var oThis = this;
     var waypts = [];
 
-    for (let i = 0; i < dest.length; i++) {
-      this.getVelibAroundPoint(dest[i], function(waypt) {
-
-        waypts.push(waypt);
-
-        if (waypts.length === dest.length) {
-          console.log('READYYYY MOTHER FOCKER');
-          oThis.calculateRoute(dest, waypts);
-        }
-      });
-    }
-
-
+    this.getVelibAroundPoint(dest, (waypt) => {
+      console.log('RES', waypt);
+      // if (waypts.length === dest.length) {
+      //   console.log('READYYYY MOTHER FOCKER');
+      //   console.log(dest, waypts)
+      //   // oThis.calculateRoute(dest, waypts);
+      // }
+    });
   }
 
   getVelibAroundPoint(dest, callback) {
-    var oThis = this;
+    //TODO: - verif station ouverte
+    //      - verif velib restant
 
-    var station: Object;
+    var m:number = 0;
+    var stations = [];
+    var _this = this;
 
-    var r = new XMLHttpRequest();
-
-    r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest + "'", true);
-
-    r.onreadystatechange = function() {
-      if (r.readyState != 4 || r.status != 200) return;
-
-      var response = JSON.parse(r.responseText);
-
-      var lat = response.results[0].geometry.location.lat;
-      var lng = response.results[0].geometry.location.lng;
-      var center = { lat: lat, lng: lng };
-
-      var circleParam = {
-        strokeColor: '#FF0000',
-        strokeOpacity: 0,
-        strokeWeight: 2,
-        fillColor: '#FF0000',
-        fillOpacity: 0,
-        map: oThis.map,
-        center: center,
-        radius: 100
-      };
-
-      var isVelibNearMe = false;
-      var test1 = false;
-
-      console.log('FOUND station FOR', dest);
-
-      while (!isVelibNearMe) {
-
-        var cityCircle = new google.maps.Circle(circleParam);
-
-        for (let i = 0; i < oThis.velibs._result.length; i++) {
-          var that = oThis.velibs._result[i];
-
-          var point = new google.maps.LatLng(that.position.lat, that.position.lng);
-
-          var isWithinRectangle = cityCircle.getBounds().contains(point);
-
-          if (isWithinRectangle) {
-
-            var waypt = {
-              location: that.address,
-              stopover: true
-            };
-
-            console.log('WAYPTS', waypt);
-
-            station = waypt;
-            test1 = true;
-          }
-        }
-        if (test1 === false) {
-          circleParam.radius += 20;
-          console.log('more distance');
-        } else {
-          isVelibNearMe = true;
-          console.log('found');
-        }
-
-      }
-      callback(station);
-      console.log('_______________________');
-    };
-    r.send();
-
+    function request(){
+      console.trace('request');
+      // var r = new XMLHttpRequest();
+      // r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest[m] + "'", true);
+      // r.onreadystatechange = function() {
+      //   if (r.readyState != 4 || r.status != 200) return;
+      //
+      //   var response = JSON.parse(r.responseText);
+      //   var lat = response.results[0].geometry.location.lat;
+      //   var lng = response.results[0].geometry.location.lng;
+      //   var center = { lat: lat, lng: lng };
+      //
+      //   var circleParam = {
+      //     strokeColor: '#FF0000',
+      //     strokeOpacity: 0,
+      //     strokeWeight: 2,
+      //     fillColor: '#FF0000',
+      //     fillOpacity: 0,
+      //     map: _this.map,
+      //     center: center,
+      //     radius: 100
+      //   };
+      //
+      //   var i:number = 0;
+      //   var isWithinRectangle = false;
+      //
+      //   while (!isWithinRectangle) {
+      //     var that = _this.velibs[i];
+      //     console.log(circleParam.radius);
+      //     var cityCircle = new google.maps.Circle(circleParam);
+      //     var point = new google.maps.LatLng(that.position.lat, that.position.lng);
+      //
+      //     isWithinRectangle = cityCircle.getBounds().contains(point);
+      //     if (isWithinRectangle) {
+      //       console.log('yes', that)
+      //       stations.push(that);
+      //     } else if (_this.velibs[i + 1] != undefined) {
+      //       i++;
+      //     } else {
+      //       i = 0;
+      //       circleParam.radius += 20;
+      //       console.log('more distance');
+      //     }
+      //   }
+      //   console.log('LENGTHH', stations.length)
+      //   if (stations.length === 2) {
+      //     callback(stations);
+      //   } else {
+      //     m++;
+      //     console.log(m, 'encore un tour')
+      //     request();
+      //   }
+      // };
+      // r.send();
+    }
+    request();
   }
 
   geolocate() {

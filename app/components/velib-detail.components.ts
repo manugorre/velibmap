@@ -47,7 +47,7 @@ export class VelibDetailComponent {
   ngOnInit(){
     this.stateDetail = false;
     this.stateDetailMore = false;
-    this._app = document.getElementsByTagName('my-app')[0];
+    this._app = document.getElementsByTagName('body')[0];
     this._detailVelib = document.getElementsByClassName('js-detail-velib')[0];
   }
 
