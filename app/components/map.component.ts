@@ -157,6 +157,8 @@ export class MapComponent {
     var form = document.getElementById('route');
 
     form.addEventListener('submit', (e) => {
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       var dest = [];
       dest.push(e.target[0].value)
       dest.push(e.target[1].value)
@@ -220,12 +222,11 @@ export class MapComponent {
     var waypts = [];
 
     this.getVelibAroundPoint(dest, (waypt) => {
-      console.log('RES', waypt);
-      // if (waypts.length === dest.length) {
-      //   console.log('READYYYY MOTHER FOCKER');
-      //   console.log(dest, waypts)
-      //   // oThis.calculateRoute(dest, waypts);
-      // }
+      if (waypt.length === dest.length) {
+        console.log('READYYYY MOTHER FOCKER');
+        console.log(dest, waypt)
+        // oThis.calculateRoute(dest, waypts);
+      }
     });
   }
 
@@ -238,67 +239,60 @@ export class MapComponent {
     var _this = this;
 
     function request(){
-      console.trace('request');
-      // var r = new XMLHttpRequest();
-      // r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest[m] + "'", true);
-      // r.onreadystatechange = function() {
-      //   if (r.readyState != 4 || r.status != 200) return;
-      //
-      //   var response = JSON.parse(r.responseText);
-      //   var lat = response.results[0].geometry.location.lat;
-      //   var lng = response.results[0].geometry.location.lng;
-      //   var center = { lat: lat, lng: lng };
-      //
-      //   var circleParam = {
-      //     strokeColor: '#FF0000',
-      //     strokeOpacity: 0,
-      //     strokeWeight: 2,
-      //     fillColor: '#FF0000',
-      //     fillOpacity: 0,
-      //     map: _this.map,
-      //     center: center,
-      //     radius: 100
-      //   };
-      //
-      //   var i:number = 0;
-      //   var isWithinRectangle = false;
-      //
-      //   while (!isWithinRectangle) {
-      //     var that = _this.velibs[i];
-      //     console.log(circleParam.radius);
-      //     var cityCircle = new google.maps.Circle(circleParam);
-      //     var point = new google.maps.LatLng(that.position.lat, that.position.lng);
-      //
-      //     isWithinRectangle = cityCircle.getBounds().contains(point);
-      //     if (isWithinRectangle) {
-      //       console.log('yes', that)
-      //       stations.push(that);
-      //     } else if (_this.velibs[i + 1] != undefined) {
-      //       i++;
-      //     } else {
-      //       i = 0;
-      //       circleParam.radius += 20;
-      //       console.log('more distance');
-      //     }
-      //   }
-      //   console.log('LENGTHH', stations.length)
-      //   if (stations.length === 2) {
-      //     callback(stations);
-      //   } else {
-      //     m++;
-      //     console.log(m, 'encore un tour')
-      //     request();
-      //   }
-      // };
-      // r.send();
+      var r = new XMLHttpRequest();
+      r.open("GET", "https://maps.googleapis.com/maps/api/geocode/json?address='" + dest[m] + "'", true);
+      r.onreadystatechange = function() {
+        if (r.readyState != 4 || r.status != 200) return;
+
+        var response = JSON.parse(r.responseText);
+        var lat = response.results[0].geometry.location.lat;
+        var lng = response.results[0].geometry.location.lng;
+        var center = { lat: lat, lng: lng };
+
+        var circleParam = {
+          strokeColor: '#FF0000',
+          strokeOpacity: 0,
+          strokeWeight: 2,
+          fillColor: '#FF0000',
+          fillOpacity: 0,
+          map: _this.map,
+          center: center,
+          radius: 100
+        };
+
+        var i:number = 0;
+        var isWithinRectangle = false;
+
+        while (!isWithinRectangle) {
+          var that = _this.velibs[i];
+          var cityCircle = new google.maps.Circle(circleParam);
+          var point = new google.maps.LatLng(that.position.lat, that.position.lng);
+
+          isWithinRectangle = cityCircle.getBounds().contains(point);
+          if (isWithinRectangle) {
+            stations.push(that);
+          } else if (_this.velibs[i + 1] != undefined) {
+            i++;
+          } else {
+            i = 0;
+            circleParam.radius += 20;
+          }
+        }
+
+        if (stations.length === 2) {
+          callback(stations);
+        } else {
+          m++;
+          request();
+        }
+      };
+      r.send();
     }
     request();
   }
 
   geolocate() {
-    console.log('geoloc')
     var oThis = this;
-    // Try HTML5 geolocation.
     var image = 'dist/images/geoloc.png';
 
     if(this.geoLocMarker !== undefined){
