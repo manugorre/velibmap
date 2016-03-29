@@ -25,7 +25,13 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
           <i class="material-icons dp48">star</i>
         </div>
         <div class="js-scroll detail-content">
-          <div>
+          <div class="js-slidder">
+            <div class="item">
+              <canvas class="myChart" width="400" height="200"></canvas>
+            </div>
+            <div class="item">
+              <canvas class="myChart" width="400" height="200"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -43,18 +49,18 @@ export class VelibDetailComponent {
   _detailMoreVelib: Element;
   scrollDetailMore: Object;
 
-  constructor(private _velibService: VelibService, private _zone: NgZone){
+  constructor(private _velibService: VelibService, private _zone: NgZone) {
 
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.stateDetail = false;
     this.stateDetailMore = false;
     this._app = document.getElementsByTagName('body')[0];
     this._detailVelib = document.getElementsByClassName('js-detail-velib')[0];
   }
 
-	getVelib(id: number | string, callback){
+  getVelib(id: number | string, callback) {
     const app = this;
     this._velibService.getVelib(id).subscribe(
       data => {
@@ -64,7 +70,9 @@ export class VelibDetailComponent {
           this.velibOpen();
           console.log('Updated List: ', this.velib);
           let checkFav = this.checkFav(this.velib.number);
-          if(checkFav) {
+          this.setChart();
+
+          if (checkFav) {
             this._detailVelib.className += ' fav';
           } else {
             this._detailVelib.classList.remove('fav');
@@ -74,48 +82,82 @@ export class VelibDetailComponent {
       err => {
         console.error(err)
       }
-    );
-	}
+      );
+  }
 
-  velibOpen(){
+  setChart() {
+
+    var data = {
+      labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
+      datasets: [
+        {
+          label: "My Second dataset",
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,0)",
+          legendTemplat: false,
+          pointStrokeColor: "rgba(151,187,205,0)",
+          data: [28, 48, 40, 19, 86, 27, 90]
+        }
+      ]
+    };
+    setTimeout(() => {
+      Chart.defaults.global.responsive = true;
+      console.log(document.getElementsByClassName("myChart"))
+      var ctx = document.getElementsByClassName("myChart")[0].getContext("2d");
+      var ctx1 = document.getElementsByClassName("myChart")[1].getContext("2d");
+      var myLineChart = new Chart(ctx).Line(data);
+      var myLineChart = new Chart(ctx1).Line(data);
+      $('.js-slidder').slick({dots: true, arrows: false});
+    }, 1000);
+    // setTimeout(() => {
+                // this.scrollDetailMore = new IScroll('.js-scroll', {
+                //   click: true,
+                //   mouseWheel: true
+                // });
+    // }, 3000)
+
+  }
+
+  initSlider() {
+    // .slick('');
+  }
+
+  velibOpen() {
     this._app.className += ' visible';
     this.stateDetail = true;
   }
 
-  velibClose(){
+  velibClose() {
     this._app.classList.remove('visible');
     this.stateDetail = false;
   }
 
-  detailVelibToggle(){
+  detailVelibToggle() {
     if (this.stateDetailMore) {
-        this.expandClose()
-    }else{
+      this.expandClose()
+    } else {
       this.expandOpen()
     }
   }
 
-  expandOpen(){
+  expandOpen() {
     this._app.className += ' preview';
     this.stateDetailMore = true;
-    this.scrollDetailMore = new IScroll('.js-scroll', {
-      click: true,
-      mouseWheel: true
-    });
   }
 
-  expandClose(){
+  expandClose() {
     this._app.classList.remove('preview');
     this.stateDetailMore = false;
   }
 
-  favori(e){
+  favori(e) {
     let that = this;
     let favStorage = localStorage.getItem('favorite');
     var favoriteToSave = JSON.parse(favStorage) ? JSON.parse(favStorage) : [];
 
-    if(this.hasClass(this._detailVelib, 'fav')) {
-      var result = favoriteToSave.findIndex( x => x.number === that.velib.number )
+    if (this.hasClass(this._detailVelib, 'fav')) {
+      var result = favoriteToSave.findIndex(x => x.number === that.velib.number)
 
       if (favoriteToSave.length <= 1) {
         favoriteToSave.shift();
@@ -124,7 +166,7 @@ export class VelibDetailComponent {
       }
 
       this._detailVelib.classList.remove('fav');
-    }else {
+    } else {
       let newFavorite = {
         'number': this.velib.number
       }
@@ -138,7 +180,7 @@ export class VelibDetailComponent {
     //favoris = favoriteToSave;
   }
 
-  checkFav(id:number) {
+  checkFav(id: number) {
     let favStorage = localStorage.getItem('favorite')
 
     if (favStorage !== null) {

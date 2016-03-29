@@ -1,23 +1,24 @@
-import {Component, ViewChild} from 'angular2/core';
+import {Component, ViewChild, NgZone} from 'angular2/core';
 import {HTTP_PROVIDERS}    from 'angular2/http';
 import {NgForm}    from 'angular2/common';
 
 import {VelibDetailComponent} from './velib-detail.components';
+import {ItinaryComponent}   from './itinary.component';
 import {VelibService}       from '../services/velib.service';
 import {Velib}              from '../services/velib';
 
 @Component({
   selector: 'map-app',
   templateUrl: 'app/templates/map.html',
-  directives: [VelibDetailComponent],
+  directives: [VelibDetailComponent, ItinaryComponent],
   providers: [
     HTTP_PROVIDERS,
     VelibService
   ]
 })
 export class MapComponent {
-  @ViewChild(VelibDetailComponent)
-  _velibDetail: VelibDetailComponent;
+  @ViewChild(VelibDetailComponent) _velibDetail: VelibDetailComponent;
+  @ViewChild(ItinaryComponent) _itinaryComponent: ItinaryComponent;
 
   map: Object;
   mc: Object;
@@ -59,7 +60,7 @@ export class MapComponent {
   _inputTo: Element;
   itinaryState: Boolean = false;
 
-  constructor(private _velibService: VelibService) {
+  constructor(private _velibService: VelibService, private _zone: NgZone) {
 
   }
 
@@ -133,8 +134,11 @@ export class MapComponent {
 
     if (Modernizr.localstorage) {
       var localVelibs = localStorage.getItem(key);
-      localVelibs = JSON.parse(localVelibs);
-      verifDate = new Date().getTime() < localVelibs.timestamp;
+      if (localVelibs !== null) {
+        localVelibs = JSON.parse(localVelibs);
+        console.log('local', localVelibs);
+        verifDate = new Date().getTime() < localVelibs.timestamp;
+      }
     }
 
     if (localVelibs !== null && verifDate) {
@@ -143,6 +147,7 @@ export class MapComponent {
     } else {
       this._velibService.getVelibs().subscribe(
         data => {
+
           if (Modernizr.localstorage) {
             var toSave = { data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS };
             localStorage.setItem(key, JSON.stringify(toSave));
@@ -166,7 +171,7 @@ export class MapComponent {
       e.stopImmediatePropagation();
 
       var dest = [];
-      this._app.className += ' loading';
+      this.loadStart();
 
       dest.push(e.target[0].value)
       dest.push(e.target[1].value)
@@ -215,8 +220,6 @@ export class MapComponent {
 
     for (let i = 0; i < 3; i++) {
       if (i === 0) {
-        console.log(itinary[0].direction.address, itinary[0].station.address);
-
         travelMode = google.maps.TravelMode.WALKING
 
         start = new google.maps.LatLng(
@@ -225,8 +228,6 @@ export class MapComponent {
           itinary[0].station.position.lat, itinary[0].station.position.lng);
 
       } else if (i === 1) {
-        console.log(itinary[0].station.address, itinary[1].station.address);
-
         travelMode = google.maps.TravelMode.BICYCLING
 
         start = new google.maps.LatLng(
@@ -235,8 +236,6 @@ export class MapComponent {
           itinary[1].station.position.lat, itinary[1].station.position.lng);
 
       } else if (i === 2) {
-        console.log(itinary[1].station.address, itinary[1].direction.address);
-
         travelMode = google.maps.TravelMode.WALKING
 
         start = new google.maps.LatLng(
@@ -266,23 +265,39 @@ export class MapComponent {
       cur++;
       if (cur < requestArray.length) {
         _this.directionsService.route(requestArray[cur], directionResults);
-      }else{
-        _this._app.classList.remove('loading');
+      } else {
+        _this.loadEnd();
         _this.setItinaryDom(itinaryFull);
       }
     }
   }
 
-  setItinaryDom(data){
+  setItinaryDom(data) {
     var durationTotal = data[0].routes[0].legs[0].duration.value +
-                        data[1].routes[0].legs[0].duration.value +
-                        data[2].routes[0].legs[0].duration.value;
+      data[1].routes[0].legs[0].duration.value +
+      data[2].routes[0].legs[0].duration.value;
 
     var distanceTotal = data[0].routes[0].legs[0].distance.value +
-                        data[1].routes[0].legs[0].distance.value +
-                        data[2].routes[0].legs[0].distance.value;
-    console.log('data', data);
+      data[1].routes[0].legs[0].distance.value +
+      data[2].routes[0].legs[0].distance.value;
 
+    var itinary = [];
+    var resume = { duration: durationTotal, distance: distanceTotal }
+    itinary.push({
+      duration: data[0].routes[0].legs[0].duration.value,
+      distance: data[0].routes[0].legs[0].distance.value,
+      start: data[0].routes[0].legs[0].start_address,
+      end: data[0].routes[0].legs[0].end_address,
+      legs: data[0].routes[0].legs[0].steps
+    });
+
+    var data:any = {
+      resume: resume,
+      data: itinary
+    }
+
+    // console.log('data', data, itinary);
+    this._itinaryComponent.showItinary(data);
   }
 
   getWaypts(dest) {

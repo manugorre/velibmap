@@ -27,16 +27,11 @@
       <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
     </svg>
   </div>
-  <div class="itinary-content">
-    <div class="itinary-header">
-      <div class="direction"></div>
-      <div class="estimate-price"></div>
-    </div>
-  </div>
 </div>
 <div class="map-loader"><i class="loader"></i></div>
 <div class="quick-access">
   <div (click)="geolocate()" class="js-geolocate geolocate"><i class="material-icons">my_location</i></div>
   <div (click)="itinary()" class="js-itinary itinary"><i class="material-icons">directions</i></div>
 </div>
+<my-itinary></my-itinary>
 <velib-detail  class="js-detail-velib" [velib]="selectedVelib"></velib-detail>
