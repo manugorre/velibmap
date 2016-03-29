@@ -3,7 +3,8 @@ html {
 	overflow: hidden;
 	-webkit-overflow-scrolling: touch;
 }
-.loading .header .loader, .loading .box-route .loader  {
+.loading .box-route .loader,
+.loading .header .loader {
 	visibility: visible;
 }
 .pac-container {
@@ -61,12 +62,6 @@ html {
 		box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px;
 	}
 	.loader {
-		background-image: url("../images/spinner_color.gif");
-		background-size: cover;
-		background-repeat: no-repeat;
-		width: 22px;
-		height: 22px;
-		display: inline-block;
 		position: absolute;
 		top: 50%;
 		margin-top: -11px;
@@ -74,14 +69,36 @@ html {
 		visibility: hidden;
 	}
 }
+// .loading .map-loader {
+// 	display: block;
+// }
+// .map-loader {
+// 	width: 100%;
+// 	height: 100%;
+// 	position: absolute;
+// 	top: 0;
+// 	background: rgba(255, 255, 255, 0.78);
+// 	z-index: 0;
+// 	text-align: center;
+// 	display: none;
+// 	.loader {
+// 		position: absolute;
+// 		left: 50%;
+// 		top: 50%;
+// 		margin-top: -11px;
+// 		margin-left: -11px;
+// 	}
+// }
+.loader {
+	background-image: url("../images/spinner_color.gif");
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 22px;
+	height: 22px;
+	display: inline-block;
+}
 .box-route {
 	.loader {
-		background-image: url("../images/spinner_color.gif");
-		background-size: cover;
-		background-repeat: no-repeat;
-		width: 22px;
-		height: 22px;
-		display: inline-block;
 		position: absolute;
 		top: 64px;
 		left: 9px;

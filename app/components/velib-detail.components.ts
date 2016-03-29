@@ -20,10 +20,12 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
         </div>
         <i class="expand material-icons dp48">more_vert</i>
       </div>
-      <div class="js-scroll detail-content">
-        <div>
-          <div class="favori" (click)="favori()">
-            <i class="material-icons dp48">star</i>
+      <div>
+        <div class="favori" (click)="favori()">
+          <i class="material-icons dp48">star</i>
+        </div>
+        <div class="js-scroll detail-content">
+          <div>
           </div>
         </div>
       </div>
