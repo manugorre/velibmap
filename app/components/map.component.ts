@@ -129,17 +129,24 @@ export class MapComponent {
     var _this = this;
     var key = 'velibs';
     var expirationMS = 10 * 60 * 1000;
-    var localVelibs = localStorage.getItem(key);
-    localVelibs = JSON.parse(localVelibs);
+    var verifDate = false;
 
-    if (localVelibs !== null && new Date().getTime() < localVelibs.timestamp) {
+    if (Modernizr.localstorage) {
+      var localVelibs = localStorage.getItem(key);
+      localVelibs = JSON.parse(localVelibs);
+      verifDate = new Date().getTime() < localVelibs.timestamp;
+    }
+
+    if (localVelibs !== null && verifDate) {
       _this.velibs = JSON.parse(localVelibs.data);
       callback(_this.velibs);
     } else {
       this._velibService.getVelibs().subscribe(
         data => {
-          var toSave = { data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS };
-          localStorage.setItem(key, JSON.stringify(toSave));
+          if (Modernizr.localstorage) {
+            var toSave = { data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS };
+            localStorage.setItem(key, JSON.stringify(toSave));
+          }
 
           _this.velibs = data;
           callback(data);
@@ -159,6 +166,7 @@ export class MapComponent {
       e.stopImmediatePropagation();
 
       var dest = [];
+      this._app.className += ' loading';
 
       dest.push(e.target[0].value)
       dest.push(e.target[1].value)
@@ -259,6 +267,7 @@ export class MapComponent {
       if (cur < requestArray.length) {
         _this.directionsService.route(requestArray[cur], directionResults);
       }else{
+        _this._app.classList.remove('loading');
         _this.setItinaryDom(itinaryFull);
       }
     }
