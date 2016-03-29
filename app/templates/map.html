@@ -1,17 +1,40 @@
 <div id="map"></div>
-<!-- <div class="box__route">
-  <form id="route" style="display: none;">
+<div class="box-route">
+  <div (click)="hideItinary()" class="hideItinary tools">
+    <i class="material-icons">arrow_back</i>
+  </div>
+  <form id="route">
     <div class="form-group">
-      <label for="routeFrom">From</label>
-      <input id="pac-input-from" type="text" class="form-control" required>
+      <input id="pac-input-from" type="text" class="form-control" placeholder="Départ" required>
     </div>
     <div class="form-group">
-      <label for="routeTo">To</label>
-      <input id="pac-input-to" type="text" class="form-control" required>
+      <input id="pac-input-to" type="text" class="form-control" placeholder="Destination" required>
     </div>
-    <button type="submit" class="btn btn-default">Submit</button>
+    <input type="submit" class="submit"/>
   </form>
-</div> -->
+  <div (click)="reverseItinary()" class="reverseItinary tools">
+    <i class="material-icons">import_export</i>
+  </div>
+  <div class="load-bar">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+</div>
+<div class="itinary-info">
+  <div class="loader">
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+    </svg>
+  </div>
+  <div class="itinary-content">
+    <div class="itinary-header">
+      <div class="direction"></div>
+      <div class="estimate-price"></div>
+    </div>
+  </div>
+</div>
+<div class="map-loader"><i class="loader"></i></div>
 <div class="quick-access">
   <div (click)="geolocate()" class="js-geolocate geolocate"><i class="material-icons">my_location</i></div>
   <div (click)="itinary()" class="js-itinary itinary"><i class="material-icons">directions</i></div>

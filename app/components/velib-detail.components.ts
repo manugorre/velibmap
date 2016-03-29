@@ -19,10 +19,12 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
         </div>
         <i class="expand material-icons dp48">more_vert</i>
       </div>
-      <div class="js-scroll detail-content">
-        <div>
-          <div class="favori" (click)="favori()">
-            <i class="material-icons dp48">star</i>
+      <div>
+        <div class="favori" (click)="favori()">
+          <i class="material-icons dp48">star</i>
+        </div>
+        <div class="js-scroll detail-content">
+          <div>
           </div>
         </div>
       </div>
@@ -47,7 +49,7 @@ export class VelibDetailComponent {
   ngOnInit(){
     this.stateDetail = false;
     this.stateDetailMore = false;
-    this._app = document.getElementsByTagName('my-app')[0];
+    this._app = document.getElementsByTagName('body')[0];
     this._detailVelib = document.getElementsByClassName('js-detail-velib')[0];
   }
 

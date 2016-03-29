@@ -1,28 +1,39 @@
-html,
-body {
+body,
+html {
 	overflow: hidden;
 	-webkit-overflow-scrolling: touch;
 }
-.loading .header .loader{
+.loading .box-route .loader,
+.loading .header .loader {
 	visibility: visible;
 }
-.pac-container{
+.pac-container {
 	position: absolute;
-  top: 75px !important;
-  margin: 0px 15px !important;
-  left: 0 !important;
-  width: ~"calc(100% - 30px)" !important;
-  border-radius: 2px !important;
+	top: 75px !important;
+	margin: 0 15px !important;
+	left: 0 !important;
+	width: ~"calc(100% - 30px)" !important;
+	border-radius: 2px !important;
 	box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px !important;
-	.pac-item:first-child{
-		border-top: none
+	.pac-item:first-child {
+		border-top: none;
 	}
 }
-.header{
-	.input{
+.itinary .pac-container {
+	width: ~"calc(100% - 80px)" !important;
+	left: 25px !important;
+	top: 125px !important;
+}
+.itinary .header {
+	-ms-transform: translateX(-80px);
+	-webkit-transform: translateX(-80px);
+	transform: translateY(-80px);
+}
+.header {
+	.input {
 		display: block;
-	  margin: 0 50px;
-		input{
+		margin: 0 50px;
+		input {
 			margin: 0;
 			padding: 0;
 			border: 0;
@@ -39,6 +50,9 @@ body {
 	width: 100%;
 	height: 50px;
 	display: block;
+	-ms-transition: -ms-transform 0.3s;
+	-webkit-transition: -webkit-transform 0.3s;
+	transition: transform 0.3s;
 	> div {
 		display: block;
 		height: 100%;
@@ -48,12 +62,6 @@ body {
 		box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px;
 	}
 	.loader {
-		background-image: url("../images/spinner_color.gif");
-		background-size: cover;
-		background-repeat: no-repeat;
-		width: 22px;
-		height: 22px;
-		display: inline-block;
 		position: absolute;
 		top: 50%;
 		margin-top: -11px;
@@ -61,11 +69,57 @@ body {
 		visibility: hidden;
 	}
 }
+// .loading .map-loader {
+// 	display: block;
+// }
+// .map-loader {
+// 	width: 100%;
+// 	height: 100%;
+// 	position: absolute;
+// 	top: 0;
+// 	background: rgba(255, 255, 255, 0.78);
+// 	z-index: 0;
+// 	text-align: center;
+// 	display: none;
+// 	.loader {
+// 		position: absolute;
+// 		left: 50%;
+// 		top: 50%;
+// 		margin-top: -11px;
+// 		margin-left: -11px;
+// 	}
+// }
+.loader {
+	background-image: url("../images/spinner_color.gif");
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 22px;
+	height: 22px;
+	display: inline-block;
+}
+.box-route {
+	.loader {
+		position: absolute;
+		top: 64px;
+		left: 9px;
+		visibility: hidden;
+	}
+}
+body.itinary.visible .quick-access {
+	-ms-transform: translate3d(100px, -12vh, 0);
+	-webkit-transform: translate3d(100px, -12vh, 0);
+	transform: translate3d(100px, -12vh, 0);
+}
+body.itinary .quick-access {
+	-ms-transform: translate3d(100px, 0, 0);
+	-webkit-transform: translate3d(100px, 0, 0);
+	transform: translate3d(100px, 0, 0);
+}
 .visible {
 	.quick-access {
-		-ms-transform: translateY(-12vh);
-		-webkit-transform: translateY(-12vh);
-		transform: translateY(-12vh);
+		-ms-transform: translateY(-70px);
+		-webkit-transform: translateY(-70px);
+		transform: translateY(-70px);
 	}
 }
 .visible.preview {
