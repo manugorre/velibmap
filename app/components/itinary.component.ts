@@ -1,10 +1,13 @@
 import {Injectable, Component} from 'angular2/core';
 
 import {MapComponent} from './map.component';
+import {ToMinPipe} from '../pipes/toMin.pipe';
+import {ToKmPipe} from '../pipes/toKm.pipe';
 
 @Component({
     selector: 'my-itinary',
-    templateUrl: 'app/templates/itinary.html'
+    templateUrl: 'app/templates/itinary.html',
+    pipes: [ToMinPipe,ToKmPipe]
 })
 
 export class ItinaryComponent {
