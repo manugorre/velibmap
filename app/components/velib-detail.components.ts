@@ -83,7 +83,7 @@ export class VelibDetailComponent {
           this.velib = data;
           this._app.classList.remove('visible');
           this.velibOpen();
-          console.log('Updated List: ', this.velib);
+          // console.log('Updated List: ', this.velib);
           let checkFav = this.checkFav(this.velib.number);
 
           this.setupDataChart();
@@ -271,7 +271,7 @@ export class VelibDetailComponent {
 
       this._detailVelib.classList += ' fav';
     }
-    console.log('after', favoriteToSave);
+    // console.log('after', favoriteToSave);
     localStorage.setItem('favorite', JSON.stringify(favoriteToSave));
     //favoris = favoriteToSave;
   }

@@ -23,7 +23,7 @@ export class ItinaryComponent {
   }
 
 	showItinary(data){
-		console.log('itinary', data);
+		// console.log('itinary', data);
 		this.itinary = data;
 	}
 }

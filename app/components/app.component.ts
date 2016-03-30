@@ -35,9 +35,6 @@ export class AppComponent {
     this.scrollMenu = new IScroll('.js-scroll-menu', {
       mouseWheel: true
     });
-
-    console.log(this);
-    console.log(this._favorites);
     this._favorites.getFavorites();
   }
 
