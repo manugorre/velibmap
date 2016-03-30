@@ -1,6 +1,5 @@
 import {Component, OnInit, NgZone}	from 'angular2/core';
 
-import {FavoriteComponent} from './favorite.component';
 import {VelibService}       from '../services/velib.service';
 import {Velib}              from '../services/velib';
 import {SplitNamePipe} from '../pipes/splitName.pipe';

@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
 
 import {MapComponent} from './map.component';
@@ -12,6 +12,7 @@ import {VelibService}	from '../services/velib.service';
 })
 
 export class AppComponent {
+  @ViewChild(FavoriteComponent) _favorites : FavoriteComponent;
 
   //nav
   stateNav: Boolean;
@@ -34,6 +35,10 @@ export class AppComponent {
     this.scrollMenu = new IScroll('.js-scroll-menu', {
       mouseWheel: true
     });
+
+    console.log(this);
+    console.log(this._favorites);
+    this._favorites.getFavorites();
   }
 
   navClose(){
