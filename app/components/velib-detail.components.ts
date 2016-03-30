@@ -102,12 +102,12 @@ export class VelibDetailComponent {
   }
 
   setupDataChart() {
-    const rootRef = new Firebase('https://velibmap.firebaseio.com/resume/Paris/12042');
+    const rootRef = new Firebase('https://velibmap.firebaseio.com/data/Paris/12042');
 
     rootRef.once("value", (snap) => {
       let data = snap.val();
       let allDay = []
-
+      console.log(data)
       for (let day in data) {
         let oneDay = [['', 'Nbr']];
         for (let hour in data[day]) {
