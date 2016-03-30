@@ -107,16 +107,16 @@ export class VelibDetailComponent {
     rootRef.once("value", (snap) => {
       let data = snap.val();
       let allDay = []
-      console.log(data)
+      // console.log(data)
       for (let day in data) {
         let oneDay = [['', 'Nbr']];
         for (let hour in data[day]) {
           let item = [hour, data[day][hour].available_bike_stands];
           oneDay.push(item);
         }
-        allDay.push({ day: day, data: [oneDay] });
+        allDay.push({ day: data[day], data: [oneDay] });
       }
-      console.log('allDay', allDay);
+      // console.log('allDay', allDay);
       this.setChart(allDay);
     });
   }
@@ -131,14 +131,33 @@ export class VelibDetailComponent {
     function drawChart() {
       var loadIteration = 0;
       for (let day in data) {
-        // console.log(data[day].data[0]);
+        // console.log('hello');
         dataChart[day] = google.visualization.arrayToDataTable([
-          ['', 'Nbr'], ['00h', 19], ['01h', 11], ['02h', 66],
-          ['03h', 10], ['04h', 10], ['05h', 10], ['06h', 10],
-          ['07h', 10], ['08h', 10], ['09h', 10], ['10h', 10],
-          ['11h', 10], ['12h', 10], ['13h', 10], ['14h', 10],
-          ['15h', 10], ['16h', 10], ['17h', 10], ['18h', 10],
-          ['19h', 10], ['20h', 10], ['21h', 10], ['22h', 10], ['23h', 10]
+          ['', 'Nbr'],
+          ['00h', data[day].day[1].available_bikes],
+          ['01h', data[day].day[2].available_bikes],
+          ['02h', data[day].day[3].available_bikes],
+          ['03h', data[day].day[4].available_bikes],
+          ['04h', data[day].day[5].available_bikes],
+          ['05h', data[day].day[6].available_bikes],
+          ['06h', data[day].day[7].available_bikes],
+          ['07h', data[day].day[8].available_bikes],
+          ['08h', data[day].day[9].available_bikes],
+          ['09h', data[day].day[10].available_bikes],
+          ['10h', data[day].day[11].available_bikes],
+          ['11h', data[day].day[12].available_bikes],
+          ['12h', data[day].day[13].available_bikes],
+          ['13h', data[day].day[14].available_bikes],
+          ['14h', data[day].day[15].available_bikes],
+          ['15h', data[day].day[16].available_bikes],
+          ['16h', data[day].day[17].available_bikes],
+          ['17h', data[day].day[18].available_bikes],
+          ['18h', data[day].day[19].available_bikes],
+          ['19h', data[day].day[20].available_bikes],
+          ['20h', data[day].day[21].available_bikes],
+          ['21h', data[day].day[22].available_bikes],
+          ['22h', data[day].day[23].available_bikes],
+          ['23h', data[day].day[24].available_bikes]
         ]);
         let dayString = "";
         switch (day) {
