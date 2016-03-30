@@ -282,21 +282,24 @@ export class MapComponent {
 
     var itinary = [];
     var resume = { duration: durationTotal, distance: distanceTotal }
-    itinary.push({
-      duration: data[0].routes[0].legs[0].duration.value,
-      distance: data[0].routes[0].legs[0].distance.value,
-      start: data[0].routes[0].legs[0].start_address,
-      end: data[0].routes[0].legs[0].end_address,
-      legs: data[0].routes[0].legs[0].steps
-    });
 
-    var data:any = {
+    for (let item in data) {
+      itinary.push({
+        duration: data[item].routes[0].legs[0].duration.value,
+        distance: data[item].routes[0].legs[0].distance.value,
+        start: data[item].routes[0].legs[0].start_address,
+        end: data[item].routes[0].legs[0].end_address,
+        legs: data[item].routes[0].legs[0].steps
+      });
+    }
+
+
+    var itinaryArray:any = {
       resume: resume,
       data: itinary
     }
 
-    // console.log('data', data, itinary);
-    this._itinaryComponent.showItinary(data);
+    this._itinaryComponent.showItinary(itinaryArray);
   }
 
   getWaypts(dest) {
