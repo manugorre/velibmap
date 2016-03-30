@@ -1,5 +1,6 @@
 import {Component, OnInit, NgZone}	from 'angular2/core';
 
+import {FavoriteComponent} from './favorite.component';
 import {VelibService}       from '../services/velib.service';
 import {Velib}              from '../services/velib';
 import {SplitNamePipe} from '../pipes/splitName.pipe';
@@ -131,7 +132,8 @@ export class VelibDetailComponent {
       this._detailVelib.classList += ' fav';
     }
     console.log('after', favoriteToSave);
-    localStorage.setItem('favorite', JSON.stringify(favoriteToSave))
+    localStorage.setItem('favorite', JSON.stringify(favoriteToSave));
+    //favoris = favoriteToSave;
   }
 
   checkFav(id:number) {

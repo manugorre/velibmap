@@ -10,7 +10,7 @@ nav {
 		}
 	}
 	.view {
-		background: red;
+		background: white;
 		position: absolute;
 		height: 100vh;
 		left: 0;
@@ -21,7 +21,7 @@ nav {
 		color: rgba(0,0,0,0.87);
 		height: 100%;
 		min-width: 250px;
-		width: 80%;
+		width: 90%;
 		z-index: 9;
 		max-width: 300px;
 		-ms-transform: translateX(-101%);
@@ -34,6 +34,33 @@ nav {
 			left: initial;
 			right: 20px;
 			background: green;
+		}
+		li{
+			box-sizing: border-box;
+			padding:10px 5px;
+			padding-right: 35px;
+			position:relative;
+			border-bottom:1px solid #e0e0e0;
+			font-size: 12px;
+			font-family: Helvetica,Arial,sans-serif;
+		}
+		li.favorite-item.fav .favori{
+			position:absolute;
+			right:5px;
+			top:10px;
+		}
+		li.favorite-item.fav .favori i{
+			color: #FFEB3B;
+		}
+		.favorite-name{
+			width:100%;
+			display: block;
+		}
+		.favorite-bikes{
+			display: inline-block;
+		}
+		.favorite-parking{
+			display: inline-block;
 		}
 	}
 	.overlay {

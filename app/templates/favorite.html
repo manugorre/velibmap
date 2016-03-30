@@ -1,0 +1,12 @@
+<div ng="favoris">
+  <ul>
+    <li *ngFor="#favori of favoris" class="favorite-item fav">
+      <span class="favorite-name">{{ favori.name }}</span>
+      <span class="favorite-bikes"><i class="material-icons dp48">directions_bike</i> {{ favori.available_bikes }}</span>
+      <span class="favorite-parking"><i class="material-icons dp48">local_parking</i> {{ favori.available_bike_stands }}</span>
+      <div class="favori" (click)="deleteFavori(favori)">
+        <i class="material-icons dp48">star</i>
+      </div>
+    </li>
+  </ul>
+</div>
