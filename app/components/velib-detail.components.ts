@@ -27,10 +27,25 @@ import {SplitNamePipe} from '../pipes/splitName.pipe';
         <div class="js-scroll detail-content">
           <div class="js-slidder">
             <div class="item">
-              <canvas class="myChart" width="400" height="200"></canvas>
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
             </div>
             <div class="item">
-              <canvas class="myChart" width="400" height="200"></canvas>
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
+            </div>
+            <div class="item">
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
+            </div>
+            <div class="item">
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
+            </div>
+            <div class="item">
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
+            </div>
+            <div class="item">
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
+            </div>
+            <div class="item">
+              <div class="chart_available_bike" style="width: 100%; height: 200px;"></div>
             </div>
           </div>
         </div>
@@ -49,8 +64,9 @@ export class VelibDetailComponent {
   _detailMoreVelib: Element;
   scrollDetailMore: Object;
 
-  constructor(private _velibService: VelibService, private _zone: NgZone) {
 
+
+  constructor(private _velibService: VelibService, private _zone: NgZone) {
   }
 
   ngOnInit() {
@@ -70,7 +86,8 @@ export class VelibDetailComponent {
           this.velibOpen();
           console.log('Updated List: ', this.velib);
           let checkFav = this.checkFav(this.velib.number);
-          this.setChart();
+
+          this.setupDataChart();
 
           if (checkFav) {
             this._detailVelib.className += ' fav';
@@ -85,36 +102,97 @@ export class VelibDetailComponent {
       );
   }
 
-  setChart() {
+  setupDataChart() {
+    const rootRef = new Firebase('https://velibmap.firebaseio.com/resume/Paris/12042');
 
-    var data = {
-      labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
-      datasets: [
-        {
-          label: "My Second dataset",
-          fillColor: "rgba(151,187,205,0.2)",
-          strokeColor: "rgba(151,187,205,1)",
-          pointColor: "rgba(151,187,205,0)",
-          legendTemplat: false,
-          pointStrokeColor: "rgba(151,187,205,0)",
-          data: [28, 48, 40, 19, 86, 27, 90]
+    rootRef.once("value", (snap) => {
+      let data = snap.val();
+      let allDay = []
+
+      for (let day in data) {
+        let oneDay = [['', 'Nbr']];
+        for (let hour in data[day]) {
+          let item = [hour, data[day][hour].available_bike_stands];
+          oneDay.push(item);
         }
-      ]
-    };
-    setTimeout(() => {
-      Chart.defaults.global.responsive = true;
-      console.log(document.getElementsByClassName("myChart"))
-      var ctx = document.getElementsByClassName("myChart")[0].getContext("2d");
-      var ctx1 = document.getElementsByClassName("myChart")[1].getContext("2d");
-      var myLineChart = new Chart(ctx).Line(data);
-      var myLineChart = new Chart(ctx1).Line(data);
-      $('.js-slidder').slick({dots: true, arrows: false});
-    }, 1000);
+        allDay.push({ day: day, data: [oneDay] });
+      }
+      console.log('allDay', allDay);
+      this.setChart(allDay);
+    });
+  }
+
+  setChart(data: Object) {
+    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.setOnLoadCallback(drawChart);
+    var dataChart = [];
+    var optionChart = [];
+    var domChart = [];
+
+    function drawChart() {
+      var loadIteration = 0;
+      for (let day in data) {
+        // console.log(data[day].data[0]);
+        dataChart[day] = google.visualization.arrayToDataTable([
+          ['', 'Nbr'], ['00h', 19], ['01h', 11], ['02h', 66],
+          ['03h', 10], ['04h', 10], ['05h', 10], ['06h', 10],
+          ['07h', 10], ['08h', 10], ['09h', 10], ['10h', 10],
+          ['11h', 10], ['12h', 10], ['13h', 10], ['14h', 10],
+          ['15h', 10], ['16h', 10], ['17h', 10], ['18h', 10],
+          ['19h', 10], ['20h', 10], ['21h', 10], ['22h', 10], ['23h', 10]
+        ]);
+        let dayString = "";
+        switch (day) {
+          case "0":
+          dayString = "Lundi"
+            break;
+          case "1":
+          dayString = "Mardi"
+            break;
+          case "2":
+          dayString = "Mercredi"
+            break;
+          case "3":
+          dayString = "Jeudi"
+            break;
+          case "4":
+          dayString = "Vendredi"
+            break;
+          case "5":
+          dayString = "Samedi"
+            break;
+          case "6":
+          dayString = "Dimanche"
+            break;
+          default:
+            dayString = "undefined"
+        }
+
+        optionChart[day] = {
+          tooltip: { trigger: 'none' },
+          legend: { position: "none" },
+          width: 300,
+          chart: {
+            title: 'Velib disponible Moyen/h',
+            subtitle: dayString
+          }
+        };
+        domChart[day] = new google.charts.Bar(document.getElementsByClassName('chart_available_bike')[day]);
+        domChart[day].draw(dataChart[day], optionChart[day]);
+        google.visualization.events.addListener(domChart[day], 'ready', myReadyHandler);
+      }
+      function myReadyHandler() {
+        loadIteration++;
+        if (data.length === loadIteration) {
+          $('.js-slidder').slick({ dots: true, arrows: false, infinite: false });
+        }
+      }
+    }
     // setTimeout(() => {
-                // this.scrollDetailMore = new IScroll('.js-scroll', {
-                //   click: true,
-                //   mouseWheel: true
-                // });
+    // this.scrollDetailMore = new IScroll('.js-scroll', {
+    //   click: true,
+    //   mouseWheel: true
+    // });
     // }, 3000)
 
   }

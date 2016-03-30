@@ -136,7 +136,6 @@ export class MapComponent {
       var localVelibs = localStorage.getItem(key);
       if (localVelibs !== null) {
         localVelibs = JSON.parse(localVelibs);
-        console.log('local', localVelibs);
         verifDate = new Date().getTime() < localVelibs.timestamp;
       }
     }
