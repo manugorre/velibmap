@@ -146,7 +146,6 @@ export class MapComponent {
     } else {
       this._velibService.getVelibs().subscribe(
         data => {
-
           if (Modernizr.localstorage) {
             var toSave = { data: JSON.stringify(data), timestamp: new Date().getTime() + expirationMS };
             localStorage.setItem(key, JSON.stringify(toSave));
