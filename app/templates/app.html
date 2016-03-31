@@ -1,1 +1,19 @@
-<h1>Hello world</h1>
+<map-app></map-app>
+<div class="header">
+  <div>
+    <a (click)="navOpen()" class="ico-nav"><i class="material-icons">menu</i></a>
+    <div class="input">
+      <input id="pac-input-search" type="text" class="form-control" placeholder="Rechercher" required>
+    </div>
+    <i class="loader"></i>
+  </div>
+</div>
+<nav class="js-nav">
+  <div class="js-drag-menu"></div>
+  <div class="view js-scroll-menu">
+    <favorite  class="js-favorite"></favorite>
+  </div>
+	<div (click)="navClose()" class="overlay">
+
+	</div>
+</nav>

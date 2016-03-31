@@ -1,0 +1,119 @@
+#map {
+	width: 100%;
+	height: 100vh;
+}
+.itinary .box-route {
+	-ms-transform: translateX(0px);
+	-webkit-transform: translateX(0px);
+	transform: translateY(0px);
+}
+.box-route {
+	position: absolute;
+	padding: 20px 0;
+	top: 0;
+	width: 100%;
+	left: 0;
+	font-size: 0;
+	background: #0091ea;
+	-ms-transform: translateX(-120px);
+	-webkit-transform: translateX(-120px);
+	transform: translateY(-120px);
+	-ms-transition: -ms-transform 0.3s;
+	-webkit-transition: -webkit-transform 0.3s;
+	transition: transform 0.3s;
+	box-shadow: rgba(70, 70, 70, 0.38) 0 1px 1px;
+	.tools {
+		display: inline-block;
+		width: 40px;
+		text-align: center;
+		color: white;
+		vertical-align: middle;
+		&.hideItinary {
+			vertical-align: top;
+		}
+	}
+}
+.loading {
+	.load-bar{
+		visibility: visible;
+	}
+}
+.load-bar {
+	visibility: hidden;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 6px;
+	background-color: #fdba2c;
+}
+.bar {
+	content: "";
+	display: inline;
+	position: absolute;
+	width: 0;
+	height: 100%;
+	left: 50%;
+	text-align: center;
+}
+.bar:nth-child(1) {
+	background-color: #da4733;
+	animation: loading 3s linear infinite;
+}
+.bar:nth-child(2) {
+	background-color: #3b78e7;
+	animation: loading 3s linear 1s infinite;
+}
+.bar:nth-child(3) {
+	background-color: #fdba2c;
+	animation: loading 3s linear 2s infinite;
+}
+@keyframes loading {
+	from {
+		left: 50%;
+		width: 0;
+		z-index: 100;
+	}
+	33.3333% {
+		left: 0;
+		width: 100%;
+		z-index: 10;
+	}
+	to {
+		left: 0;
+		width: 100%;
+	}
+}
+.itinary-info {
+	height: 100%;
+	max-height: calc(100vh - 110px);
+	width: 100%;
+	background: white;
+	display: inline-block;
+	transform: translateY(-100%);
+	z-index: 0;
+}
+#route {
+	width: ~"calc(100% - 80px)";
+	display: inline-block;
+	vertical-align: middle;
+	.form-group:first-child {
+		margin-bottom: 10px;
+	}
+	.submit {
+		display: none;
+	}
+	input {
+		border: none;
+		border-radius: 2px;
+		background-color: rgba(115, 168, 255, 0.71);
+		height: 30px;
+		font-size: 15px;
+		padding: 0 10px 3px;
+		color: white;
+		width: 100%;
+		outline: none;
+		&::-webkit-input-placeholder {
+			color: rgba(255,255,255,0.6);
+		}
+	}
+}

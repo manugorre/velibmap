@@ -1,0 +1,37 @@
+<div id="map"></div>
+<div class="box-route">
+  <div (click)="hideItinary()" class="hideItinary tools">
+    <i class="material-icons">arrow_back</i>
+  </div>
+  <form id="route">
+    <div class="form-group">
+      <input id="pac-input-from" type="text" class="form-control" placeholder="Départ" required>
+    </div>
+    <div class="form-group">
+      <input id="pac-input-to" type="text" class="form-control" placeholder="Destination" required>
+    </div>
+    <input type="submit" class="submit"/>
+  </form>
+  <div (click)="reverseItinary()" class="reverseItinary tools">
+    <i class="material-icons">import_export</i>
+  </div>
+  <div class="load-bar">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+</div>
+<div class="itinary-info">
+  <div class="loader">
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+    </svg>
+  </div>
+</div>
+<div class="map-loader"><i class="loader"></i></div>
+<div class="quick-access">
+  <div (click)="geolocate()" class="js-geolocate geolocate"><i class="material-icons">my_location</i></div>
+  <div (click)="itinary()" class="js-itinary itinary"><i class="material-icons">directions</i></div>
+</div>
+<my-itinary></my-itinary>
+<velib-detail  class="js-detail-velib" [velib]="selectedVelib"></velib-detail>

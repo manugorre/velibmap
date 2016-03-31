@@ -1,0 +1,15 @@
+<div *ngIf="itinary && itinary.resume && itinary.data"class="itinary-content">
+  <div class="itinary-header">
+    <div class="direction">{{ itinary.resume.duration | toMin }} min</div>
+    <div class="estimate-price">{{ itinary.resume.distance | toKm }} km</div>
+  </div>
+  <div class="itinary-content">
+    <div *ngFor="#step of itinary.data; #i=index">
+      <div>{{ step.start }}</div>
+      <div *ngFor="#leg of step.legs">
+        <span>{{ leg.instructions }}</span>
+      </div>
+      <div>{{ step.end }}</div>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,9 @@
     "lite": "lite-server",
     "start": "concurrent \"npm run tsc:w\" \"npm run lite\" "
   },
+  "engines": {
+    "node": "5.0.0"
+  },
   "license": "ISC",
   "dependencies": {
     "angular2": "2.0.0-beta.0",
